@@ -1,111 +1,127 @@
 <!DOCTYPE html>
-<html lang="es"> <head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorador Interactivo de Estructuras de Datos</title> <link rel="stylesheet" href="styles.css">
+    <title>Explorador Estructuras Datos</title> <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Explorador Visual Interactivo de Estructuras de Datos</h1> 
-            <p>Explora y aprende estructuras de datos fundamentales a través de la visualización</p> </header>
+            <h1>Explorador Visual Interactivo de Estructuras de Datos</h1>
+            <p>Explora y aprende estructuras de datos fundamentales</p> </header>
 
         <nav class="main-nav">
-            <button id="home-btn" class="nav-btn active">Inicio</button> <button id="stack-btn" class="nav-btn">Pila</button> 
-            <button id="queue-btn" class="nav-btn">Cola</button> <button id="bst-btn" class="nav-btn">Árbol Binario de Búsqueda</button> </nav>
+            <button id="home-btn" class="nav-btn active">Inicio</button>
+            <button id="stack-btn" class="nav-btn">Pila</button>
+            <button id="queue-btn" class="nav-btn">Cola</button>
+            <button id="bst-btn" class="nav-btn">Árbol Binario de Búsqueda</button>
+        </nav>
 
         <main id="content-area">
             <section id="home-view" class="view active">
-                <h2>¡Bienvenido al Explorador de Estructuras de Datos!</h2> 
-                <p>Esta herramienta interactiva te ayuda a aprender sobre tres estructuras de datos fundamentales:</p> <div class="card-container">
+                <h2>¡Bienvenido!</h2> <p>Esta herramienta interactiva te ayuda a aprender sobre tres estructuras de datos:</p> <div class="card-container">
                     <div class="card" id="stack-card">
-                        <h3>Pila</h3> 
-                        <p>Una estructura de datos lineal que sigue el principio Último en Entrar, Primero en Salir (LIFO).</p> 
-                        <div class="difficulty-indicator easy">Dificultad: Fácil</div> 
-                        <button class="explore-btn" data-target="stack">Explorar Pila</button> 
+                        <h3>Pila</h3>
+                        <p>Sigue el principio Último en Entrar, Primero en Salir (LIFO).</p> <div class="difficulty-indicator easy">Dificultad: Fácil</div>
+                        <button class="explore-btn" data-target="stack">Explorar Pila</button>
                     </div>
 
                     <div class="card" id="queue-card">
-                        <h3>Cola</h3> 
-                        <p>Una estructura de datos lineal que sigue el principio Primero en Entrar, Primero en Salir (FIFO).</p> 
-                        <div class="difficulty-indicator medium">Dificultad: Medio</div> 
-                        <button class="explore-btn" data-target="queue">Explorar Cola</button> 
+                        <h3>Cola</h3>
+                        <p>Sigue el principio Primero en Entrar, Primero en Salir (FIFO).</p> <div class="difficulty-indicator medium">Dificultad: Medio</div>
+                        <button class="explore-btn" data-target="queue">Explorar Cola</button>
                     </div>
 
                     <div class="card" id="bst-card">
-                        <h3>Árbol Binario de Búsqueda</h3> 
-                        <p>Una estructura de datos jerárquica para búsqueda, inserción y eliminación eficiente.</p> 
-                        <div class="difficulty-indicator hard">Dificultad: Difícil</div> 
-                        <button class="explore-btn" data-target="bst">Explorar ABB</button> 
+                        <h3>Árbol Binario de Búsqueda</h3>
+                        <p>Estructura jerárquica para búsqueda eficiente.</p> <div class="difficulty-indicator hard">Dificultad: Difícil</div>
+                        <button class="explore-btn" data-target="bst">Explorar ABB</button>
                     </div>
-                </div>  
+                </div>
             </section>
 
             <section id="stack-view" class="view">
-                <h2>Visualización de Pila</h2> <p>Una pila sigue el principio Último en Entrar, Primero en Salir (LIFO) - el último elemento añadido es el primero en ser removido.</p> <div class="info-container">
-                    <div class="info-section">
-                        <h3>Cómo Funciona</h3> <p>Una Pila es como un tubo o contenedor donde los ítems solo pueden ser añadidos o removidos de la cima:</p> <ul>
-                            <li><strong>Push:</strong> Añadir un elemento a la cima de la pila</li> 
-                            <li><strong>Pop:</strong> Remover el elemento de la cima de la pila</li> 
-                            <li><strong>LIFO (Last-In-First-Out):</strong> El último elemento añadido a la pila es el primero en ser removido</li> 
-                            <li><strong>Peek/Top:</strong> Ver el elemento de la cima sin removerlo</li> </ul>
-                        <p>Piensa en ello como una pila donde solo puedes acceder al ítem de más arriba.</p> </div>
+                <h2>Visualización de Pila</h2>
+                <p>LIFO: El último en entrar es el primero en salir.</p> <div class="info-container">
+                    <div id="stack-how-it-works" class="info-section">
+                        <h3>Cómo Funciona</h3>
+                        <p>Una Pila es como un tubo cerrado por abajo:</p> <ul>
+                            <li><Span class="glossary-term">Push</span>: Añadir un elemento a la cima de la pila</li>
+                            <li><Span class="glossary-term">Pop</span>: Remover el elemento de la cima de la pila</li>
+                            <li><Span class="glossary-term">LIFO</Span> (Last-In-First-Out): El último elemento añadido a la pila es el primero en ser removido</li>
+                            <li><Span class="glossary-term">Peek/Top</Span>: Ver el elemento de la cima sin removerlo</li>
+                        </ul>
+                        <p>Solo accedes al elemento superior.</p> </div>
 
                     <div class="info-section">
-                        <h3>Ejemplos de la Vida Real</h3> <ul>
-                            <li><strong>Pila de platos:</strong> Añades y remueves platos de la cima de la pila</li> 
-                            <li><strong>Función Deshacer/Rehacer:</strong> Cada acción es puesta (pushed) en una pila, y deshacer (undo) remueve (pops) la acción más reciente</li> 
-                            <li><strong>Historial del navegador:</strong> Cada página que visitas es puesta (pushed) en una pila, y el botón de atrás (back) te remueve (pops) a la página anterior</li> 
-                            <li><strong>Llamadas a funciones en programación:</strong> Cuando se llama a una función, es puesta (pushed) en la pila de llamadas</li> </ul>
+                        <h3>Ejemplos Reales</h3> <ul>
+                            <li><strong>Pila de platos:</strong> Añades y quitas de arriba</li>
+                            <li><strong>Deshacer/Rehacer:</strong> Última acción se revierte primero</li>
+                            <li><strong>Historial navegador:</strong> Botón atrás vuelve a última página visitada</li>
+                            <li><strong>Llamadas funciones (código):</strong> La última función llamada termina primero</li>
+                        </ul>
                     </div>
                 </div>
 
+                 <button id="stack-start-tutorial" class="action-btn">Iniciar Tutorial Interactivo</button>
+
+
                 <div class="visualization-container">
                     <div class="control-panel">
-                        <input type="number" id="stack-input" class="ds-input" placeholder="Ingresa un número"> 
-                        <button id="stack-push" class="action-btn">Push</button> 
-                        <button id="stack-pop" class="action-btn">Pop</button> 
-                        <button id="stack-reset" class="reset-btn">Reiniciar</button> </div>
+                        <input type="number" id="stack-input" class="ds-input" placeholder="Ingresa un número">
+                        <button id="stack-push" class="action-btn">Push</button>
+                        <button id="stack-pop" class="action-btn">Pop</button>
+                        <button id="stack-reset" class="reset-btn">Reiniciar</button>
+                    </div>
 
                     <div class="visualization-area">
                         <div id="stack-container" class="stack-container">
-                            <div class="stack-base">Base de la Pila</div> </div>
+                            <div class="stack-base">Base</div> </div>
                     </div>
                 </div>
 
                 <div class="challenge-container">
-                    <h3>Desafío de Pila</h3> <p id="stack-challenge-description">Usa las operaciones PUSH y POP para igualar la secuencia objetivo:</p> <div id="stack-target-sequence" class="target-sequence"></div>
+                     <h3>Desafío Pila</h3>
+                    <p id="stack-challenge-description">Usa PUSH/POP para igualar la secuencia:</p>
+                    <div id="stack-target-sequence" class="target-sequence"></div>
                     <div id="stack-output-sequence" class="output-sequence"></div>
-                    <button id="stack-start-challenge" class="challenge-btn">Iniciar Desafío</button> 
-                    <div id="stack-challenge-status" class="challenge-status"></div>
-                </div>
+                    <button id="stack-start-challenge" class="challenge-btn">Iniciar Desafío</button>
+                     <div id="stack-challenge-status" class="challenge-status"></div> </div>
             </section>
 
             <section id="queue-view" class="view">
-                <h2>Visualización de Cola</h2> <p>Una cola sigue el principio Primero en Entrar, Primero en Salir (FIFO) - el primer elemento añadido es el primero en ser removido.</p> <div class="info-container">
+                <h2>Visualización de Cola</h2>
+                <p>FIFO: El primero en entrar es el primero en salir.</p> <div class="info-container">
                     <div class="info-section">
-                        <h3>Cómo Funciona</h3> <p>Una Cola funciona como una línea de personas esperando un servicio:</p> <ul>
-                            <li><strong>Enqueue:</strong> Añadir un elemento al final de la cola</li> 
-                            <li><strong>Dequeue:</strong> Remover el elemento del frente de la cola</li> 
-                            <li><strong>FIFO (First-In-First-Out):</strong> El primer elemento añadido a la cola es el primero en ser removido</li> 
-                            <li><strong>Front:</strong> El primer elemento en la cola (el próximo a ser removido)</li> 
-                            <li><strong>Rear:</strong> El último elemento en la cola (el más recientemente añadido)</li> </ul>
-                        <p>Los elementos entran por un extremo y salen por el otro, justo como personas en una fila.</p> </div>
+                        <h3>Cómo Funciona</h3>
+                        <p>Una Cola es como una fila:</p> <ul>
+                            <li><Span class="glossary-term">Enqueue</Span>: Añadir un elemento al final de la cola</li>
+                            <li><Span class="glossary-term">Dequeue</Span>: Remover el elemento del frente de la cola</li>
+                            <li><Span class="glossary-term">FIFO</Span> (First-In-First-Out): El primer elemento añadido a la cola es el primero en ser removido</li>
+                            <li><Span class="glossary-term">Front</Span>: El primer elemento en la cola (el próximo a ser removido)</li>
+                            <li><Span class="glossary-term">Rear</Span>: El último elemento en la cola (el más recientemente añadido)</li>
+                        </ul>
+                        <p>Entran por un lado, salen por el otro.</p> </div>
 
                     <div class="info-section">
-                        <h3>Ejemplos de la Vida Real</h3> <ul>
-                            <li><strong>Esperar en línea:</strong> La primera persona en unirse a la línea es la primera en ser atendida</li>
-                            <li><strong>Cola de impresión:</strong> Los trabajos de impresión se procesan en el orden en que se reciben</li> 
-                            <li><strong>Servicio al cliente:</strong> Las llamadas son respondidas en el orden en que se recibieron</li> 
-                            <li><strong>Semáforos:</strong> Los autos esperan en una cola y se mueven a través de la intersección en orden</li> 
-                            <li><strong>Planificación de tareas:</strong> Los sistemas operativos a menudo usan colas para gestionar procesos</li> </ul>
+                        <h3>Ejemplos Reales</h3> <ul>
+                            <li><strong>Esperar en línea:</strong> Primero en llegar, primero atendido</li>
+                            <li><strong>Cola impresión:</strong> Trabajos se procesan en orden</li>
+                            <li><strong>Servicio al cliente:</strong> Llamadas atendidas en orden</li>
+                            <li><strong>Semáforos:</strong> Autos cruzan en orden de llegada</li>
+                            <li><strong>Planificación tareas (SO):</strong> Procesos gestionados en fila</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="visualization-container">
                     <div class="control-panel">
-                        <input type="number" id="queue-input" class="ds-input" placeholder="Ingresa un número"> <button id="queue-enqueue" class="action-btn">Enqueue</button> 
-                        <button id="queue-dequeue" class="action-btn">Dequeue</button> <button id="queue-reset" class="reset-btn">Reiniciar</button> </div>
+                        <input type="number" id="queue-input" class="ds-input" placeholder="Ingresa un número">
+                        <button id="queue-enqueue" class="action-btn">Enqueue</button>
+                        <button id="queue-dequeue" class="action-btn">Dequeue</button>
+                        <button id="queue-reset" class="reset-btn">Reiniciar</button>
+                    </div>
 
                     <div class="visualization-area">
                         <div id="queue-container" class="queue-container">
@@ -114,41 +130,47 @@
                 </div>
 
                 <div class="challenge-container">
-                    <h3>Desafío de Cola</h3> <p id="queue-challenge-description">Procesa los elementos en el orden en que llegan usando DEQUEUE en el momento correcto.</p> <div id="queue-arriving-elements" class="arriving-elements"></div>
+                    <h3>Desafío Cola</h3> <p id="queue-challenge-description">Usa DEQUEUE para procesar en orden de llegada.</p> <div id="queue-arriving-elements" class="arriving-elements"></div>
                     <div id="queue-processed-elements" class="processed-elements"></div>
-                    <button id="queue-start-challenge" class="challenge-btn">Iniciar Desafío</button> 
+                    <button id="queue-start-challenge" class="challenge-btn">Iniciar Desafío</button>
                     <div id="queue-challenge-status" class="challenge-status"></div>
                 </div>
             </section>
 
             <section id="bst-view" class="view">
-                <h2>Visualización de Árbol Binario de Búsqueda</h2> <p>Un Árbol Binario de Búsqueda está organizado de manera que los valores menores que un nodo van a su subárbol izquierdo, y los valores mayores van a su subárbol derecho.</p> <div class="visualization-container">
+                <h2>Visualización Árbol Binario de Búsqueda</h2> <p>Valores menores a la izquierda, mayores a la derecha.</p> <div class="visualization-container">
                     <div class="control-panel">
-                        <input type="number" id="bst-input" class="ds-input" placeholder="Ingresa un número"> 
-                        <button id="bst-insert" class="action-btn">Insertar</button> <button id="bst-reset" class="reset-btn">Reiniciar</button> 
+                        <input type="number" id="bst-input" class="ds-input" placeholder="Ingresa un número">
+                        <button id="bst-insert" class="action-btn">Insertar</button>
+                        <button id="bst-reset" class="reset-btn">Reiniciar</button>
                         <div class="traversal-controls">
-                            <p>Recorridos del Árbol:</p> <button id="bst-inorder" class="traversal-btn">In-order</button> <button id="bst-preorder" class="traversal-btn">Pre-order</button> <button id="bst-postorder" class="traversal-btn">Post-order</button> </div>
+                            <p>Recorridos:</p> <button id="bst-inorder" class="traversal-btn">In-order</button>
+                            <button id="bst-preorder" class="traversal-btn">Pre-order</button>
+                            <button id="bst-postorder" class="traversal-btn">Post-order</button>
+                        </div>
                     </div>
 
                     <div class="visualization-area">
                         <div id="bst-container" class="bst-container">
                             <svg id="bst-svg" width="100%" height="400"></svg>
                         </div>
-                        <div id="traversal-result" class="traversal-result"></div> </div>
+                        <div id="traversal-result" class="traversal-result"></div>
+                    </div>
                 </div>
 
                 <div class="challenge-container">
-                    <h3>Desafío de ABB</h3> <p id="bst-challenge-description">¡Haz click en los nodos en el orden correcto para el recorrido requerido!</p> 
-                    <div id="bst-traversal-type" class="traversal-type"></div> <div id="bst-user-sequence" class="user-sequence"></div>
-                    <button id="bst-start-challenge" class="challenge-btn">Iniciar Desafío</button> 
-                    <div id="bst-challenge-status" class="challenge-status"></div> </div>
+                    <h3>Desafío ABB</h3> <p id="bst-challenge-description">Click nodos en orden recorrido:</p> <div id="bst-traversal-type" class="traversal-type"></div>
+                    <div id="bst-user-sequence" class="user-sequence"></div>
+                    <button id="bst-start-challenge" class="challenge-btn">Iniciar Desafío</button>
+                    <div id="bst-challenge-status" class="challenge-status"></div>
+                </div>
             </section>
         </main>
+
+        <footer>
+            <p>Explorador Estructuras Datos - Feria Universitaria</p> </footer>
     </div>
 
     <script src="app.js" type="module"></script>
-    <script src="stack/stack.js" type="module"></script>
-    <script src="queue/queue.js" type="module"></script>
-    <script src="bst/binary_tree.js" type="module"></script>
-</body>
+    <script src="stack/stack.js" type="module"></script> <script src="queue/queue.js" type="module"></script> <script src="bst/binary_tree.js" type="module"></script> </body>
 </html>
