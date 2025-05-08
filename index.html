@@ -81,14 +81,41 @@
                     </div>
                 </div>
 
-                <div class="challenge-container">
-                     <h3>Desafío Pila</h3>
-                    <p id="stack-challenge-description">Usa PUSH/POP para igualar la secuencia:</p>
-                    <div id="stack-target-sequence" class="target-sequence"></div>
-                    <div id="stack-output-sequence" class="output-sequence"></div>
+                <div class="three-stacks-container">
+                    <div id="stack-challenge-left" class="stack-challenge-viz">
+                         <div class="stack-base">Base</div> </div>
+                    <div class="move-buttons">
+                         <button id="move-left-middle" class="action-btn move-btn" disabled>Mover a Medio</button> </div>
+
+
+                    <div id="stack-challenge-middle" class="stack-challenge-viz">
+                         <div class="stack-base">Base</div> </div>
+                    <div class="move-buttons">
+                         <button id="move-middle-left" class="action-btn move-btn" disabled>Mover a Izquierda</button> <button id="move-middle-right" class="action-btn move-btn" disabled>Mover a Derecha</button> </div>
+
+
+                    <div id="stack-challenge-right" class="stack-challenge-viz">
+                         <div class="stack-base">Base</div> </div>
+                     <div class="move-buttons">
+                         <button id="move-right-middle" class="action-btn move-btn" disabled>Mover a Medio</button> </div>
+                </div>
+
+                    <div class="challenge-target-area">
+                        <h4>Objetivo:</h4> <div class="target-stack-config">
+                            <p>Izquierda:</p>
+                            <div id="stack-target-left" class="target-sequence"></div> </div>
+                        <div class="target-stack-config">
+                            <p>Medio:</p>
+                            <div id="stack-target-middle" class="target-sequence"></div> </div>
+                        <div class="target-stack-config">
+                             <p>Derecha:</p>
+                            <div id="stack-target-right" class="target-sequence"></div> </div>
+                    </div>
+
+
                     <button id="stack-start-challenge" class="challenge-btn">Iniciar Desafío</button>
-                     <div id="stack-challenge-status" class="challenge-status"></div> </div>
-            </section>
+
+                    <div id="stack-challenge-status" class="challenge-status"></div> </div>
 
             <section id="queue-view" class="view">
                 <h2>Visualización de Cola</h2>
@@ -168,7 +195,7 @@
         </main>
 
         <footer>
-            <p>Explorador Estructuras Datos - Feria Universitaria</p> </footer>
+            <p>Ingenieria de Software - Universidad Catolica Boliviana</p> </footer>
     </div>
 
     <script src="app.js" type="module"></script>

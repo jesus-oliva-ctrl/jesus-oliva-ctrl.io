@@ -3,127 +3,185 @@
 
 // --- Importaciones ---
 import { Stack } from './stack-logic.js'; // Lógica de la Pila
-import { renderStack } from './stack-rendering.js'; // Renderizado visual
-import { updateTargetSequence, updateOutputSequence } from './stack-challenge-ui.js'; // UI del desafío (si se usan)
-import { StackChallengeManager } from './stack-challenge-manager.js'; // Gestor de desafío
+// renderChallengeStack ya NO necesita el callback onElementClick
+import { renderStack, renderChallengeStack } from './stack-rendering.js'; // Renderizado (general y desafío)
+import { displayTargetConfig } from './stack-challenge-ui.js'; // UI del desafío (mostrar objetivo)
+// El viejo StackChallengeManager ya no se usa para el desafío.
+// import { StackChallengeManager } from './stack-challenge-manager.js';
+import { ThreeStackChallengeManager } from './three-stack-challenge-manager.js'; // Gestor de desafío de tres pilas
 import { StackTutorialManager } from './stack-tutorial.js'; // Gestor de tutoriales
 // --- Fin Importaciones ---
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Elementos DOM ---
+    // --- Elementos DOM (Generales y Tutorial) ---
     const stackInput = document.getElementById('stack-input');
     const pushButton = document.getElementById('stack-push');
     const popButton = document.getElementById('stack-pop');
-    const resetButton = document.getElementById('stack-reset');
-    const stackContainer = document.getElementById('stack-container');
-    const startChallengeButton = document.getElementById('stack-start-challenge');
-    // Elementos del desafío (ajusta según tu index.html actual)
-    // const targetSequence = document.getElementById('stack-target-sequence');
-    // const outputSequence = document.getElementById('stack-output-sequence');
-    // const stackCheckStateButton = document.getElementById('stack-check-state');
-    const challengeStatus = document.getElementById('stack-challenge-status');
-
-    // Elementos del Tutorial
+    const resetButton = document.getElementById('stack-reset'); // Botón Reiniciar general
+    const stackContainer = document.getElementById('stack-container'); // Contenedor visualización principal
     const startTutorialButton = document.getElementById('stack-start-tutorial');
     const howItWorksElement = document.getElementById('stack-how-it-works');
-    // --- Fin Elementos DOM ---
+    // --- Fin Elementos DOM (Generales y Tutorial) ---
 
 
-    // --- Instancia DS ---
-    const stack = new Stack(); // Instancia de la Pila
+    // --- Elementos DOM del Desafío (NUEVOS para el juego de tres pilas) ---
+    const startChallengeButton = document.getElementById('stack-start-challenge'); // Botón Iniciar Desafío
+    const challengeStatus = document.getElementById('stack-challenge-status'); // Área mensaje estado desafío
+    const threeStacksContainer = document.querySelector('.three-stacks-container'); // Contenedor padre de las 3 pilas del desafío
+
+    // Contenedores visuales para cada pila del desafío
+    const leftStackVizEl = document.getElementById('stack-challenge-left');
+    const middleStackVizEl = document.getElementById('stack-challenge-middle');
+    const rightStackVizEl = document.getElementById('stack-challenge-right');
+
+    // Elementos para mostrar el objetivo de cada pila en la UI
+    const leftTargetEl = document.getElementById('stack-target-left');
+    const middleTargetEl = document.getElementById('stack-target-middle');
+    const rightTargetEl = document.getElementById('stack-target-right');
+
+    // Botones de movimiento (NUEVOS) - Obtener referencias
+    const moveLeftMiddleBtn = document.getElementById('move-left-middle');
+    const moveMiddleLeftBtn = document.getElementById('move-middle-left');
+    const moveMiddleRightBtn = document.getElementById('move-middle-right');
+    const moveRightMiddleBtn = document.getElementById('move-right-middle');
+    // --- Fin Elementos DOM del Desafío ---
+
+
+    // --- Instancia DS (Pila principal para exploración/tutorial) ---
+    const stack = new Stack();
     // --- Fin Instancia DS ---
-
-
-    // --- Instancia Gestor Desafío ---
-    // Asegúrate de pasar las dependencias correctas según la clase StackChallengeManager actual.
-     const stackChallenge = new StackChallengeManager({
-         stackInstance: stack,
-         vizContainerElement: stackContainer,
-         uiElements: { /* ... elementos UI desafío ... */
-             challengeStatus: challengeStatus, // Pasa status
-             startButton: startChallengeButton, // Pasa botón iniciar
-             dequeueButton: popButton, // Pasa popButton si el gestor lo necesita
-             enqueueButton: pushButton, // Pasa pushButton si el gestor lo necesita
-         },
-         uiUpdateFunctions: { /* ... funciones UI desafío ... */
-            // updateTargetSequence: updateTargetSequence, // Si aún se usa
-            // updateOutputSequence: updateOutputSequence, // Si aún se usa
-         },
-         renderingFunctions: { renderStack: renderStack /* ... otras si el gestor las usa ... */ },
-         operationalFunctions: { addElement: addElement /* ... otras si el gestor las usa ... */ },
-     });
-    // --- Fin Instancia Gestor Desafío ---
 
 
     // --- Instancia Gestor Tutorial ---
     const stackTutorial = new StackTutorialManager({
         explanationElement: howItWorksElement,
-        // Pasar más dependencias del tutorial aquí (stack, botones, input, etc.)
-         stackInstance: stack,
-         vizContainerElement: stackContainer,
-         uiElements: {
-             input: stackInput,
-             pushButton: pushButton,
-             popButton: popButton,
-             resetButton: resetButton,
-             startChallengeButton: startChallengeButton, // Puede necesitar referencia
-             startTutorialButton: startTutorialButton, // Puede necesitar referencia
-             challengeStatusElement: challengeStatus, // Para mensajes de estado si el tutorial los usa
-         },
-         renderingFunctions: { renderStack: renderStack /* ... otras si el tutorial las usa ... */ },
-         operationalFunctions: { // Pasar referencias a estas funciones para que el tutorial pueda 'llamarlas' o coordinarlas
+        stackInstance: stack, // Pasa la instancia de la pila principal
+        vizContainerElement: stackContainer, // Pasa el contenedor de visualización principal
+        uiElements: { // Pasa los elementos UI relevantes para el tutorial
+            input: stackInput,
+            pushButton: pushButton,
+            popButton: popButton,
+            resetButton: resetButton,
+            startChallengeButton: startChallengeButton,
+            startTutorialButton: startTutorialButton,
+            challengeStatusElement: challengeStatus,
+        },
+        renderingFunctions: { renderStack: renderStack }, // Pasa la función de renderizado general
+        operationalFunctions: { // Pasa referencias a las funciones de operación (Push/Pop)
             addElement: addElement,
             removeElement: removeElement,
-            // Quizás también las funciones de desafío para deshabilitarlas durante el tutorial
-            // startChallenge: stackChallenge.start.bind(stackChallenge), // Pasar el método del gestor desafío
-            // resetChallenge: stackChallenge.reset.bind(stackChallenge), // Pasar el método del gestor desafío
-         },
+        },
     });
     // --- Fin Instancia Gestor Tutorial ---
 
 
-    // --- Variables Desafío (Manejadas por Gestor Desafío) ---
-    // --- Fin Variables Desafío ---
+    // --- Instancia Gestor Desafío (NUEVO: Tres Pilas) ---
+    const threeStackChallenge = new ThreeStackChallengeManager({
+        vizElements: { // Pasa los contenedores visuales de las 3 pilas del desafío
+            leftStackEl: leftStackVizEl,
+            middleStackEl: middleStackVizEl,
+            rightStackEl: rightStackVizEl,
+        },
+        targetElements: { // Pasa los elementos DOM para mostrar el objetivo
+            leftTargetEl: leftTargetEl,
+            middleTargetEl: middleTargetEl,
+            rightTargetEl: rightTargetEl,
+        },
+        challengeStatusEl: challengeStatus, // Pasa el elemento de estado
+        startButtonEl: startChallengeButton, // Pasa el botón de inicio/reiniciar desafío
+        renderingFunctions: { renderChallengeStack: renderChallengeStack }, // Pasa la función de renderizado para pilas de desafío
+        uiUpdateFunctions: { displayTargetConfig: displayTargetConfig }, // Pasa la función para mostrar el objetivo
+    });
+    // --- Fin Instancia Gestor Desafío ---
 
 
-    // --- Funciones Operación/Visualización ---
+    // --- Funciones para controlar el estado de los botones ---
 
+    // Habilita la UI normal (input, push, pop, tutorial, reset principal)
+    function enableNormalUI() {
+         stackInput.disabled = false;
+         pushButton.disabled = false;
+         // PopButton depende del estado de la pila principal (stack), se maneja al final de operaciones.
+         resetButton.disabled = false; // El Reset general está siempre habilitado (o lo gestiona quien esté activo)
+         startTutorialButton.style.display = ''; // Mostrar botón tutorial
+
+         // Deshabilitar todos los botones de movimiento del desafío.
+         disableMoveButtons();
+    }
+
+    // Deshabilita la UI normal durante tutorial o desafío.
+    function disableNormalUI() {
+        stackInput.disabled = true;
+        pushButton.disabled = true;
+        popButton.disabled = true;
+        resetButton.disabled = true; // Deshabilitar Reset general durante tutorial/desafío
+        startTutorialButton.style.display = 'none'; // Ocultar botón tutorial
+
+         // Deshabilitar todos los botones de movimiento del desafío.
+         disableMoveButtons(); // Asegurarse de que también se deshabilitan.
+    }
+
+    // Deshabilita todos los botones de movimiento del desafío.
+    function disableMoveButtons() {
+        moveLeftMiddleBtn.disabled = true;
+        moveMiddleLeftBtn.disabled = true;
+        moveMiddleRightBtn.disabled = true;
+        moveRightMiddleBtn.disabled = true;
+    }
+
+    // Actualiza el estado de los botones de movimiento del desafío
+    // en función de si el desafío está activo y si la pila de origen no está vacía.
+    function updateMoveButtonStates() {
+        // Si el desafío no está activo, todos los botones deben estar deshabilitados.
+        if (!threeStackChallenge.isActive()) {
+             disableMoveButtons();
+             return;
+        }
+
+        // Si el desafío está activo, habilitar botones solo si la pila de origen NO está vacía.
+        moveLeftMiddleBtn.disabled = threeStackChallenge.stacks.left.isEmpty();
+        moveMiddleLeftBtn.disabled = threeStackChallenge.stacks.middle.isEmpty();
+        moveMiddleRightBtn.disabled = threeStackChallenge.stacks.middle.isEmpty();
+        moveRightMiddleBtn.disabled = threeStackChallenge.stacks.right.isEmpty();
+    }
+    // --- Fin Funciones de Control UI ---
+
+
+    // --- Funciones Operación/Visualización (para vista principal/tutorial) ---
+    // Estas funciones Push/Pop son usadas por la vista de exploración normal y el tutorial.
+    // El nuevo juego de desafío NO las usa.
     function addElement(value) {
-        // Validación de entrada
         if (value === '' || isNaN(value)) { alert('¡Por favor, ingresa un número válido!'); return; }
         const elementValue = parseInt(value);
 
-        // Crea elemento DOM y anima
+        // Crea elemento DOM y anima (en la pila principal)
         const element = document.createElement('div');
         element.className = 'stack-element'; element.textContent = elementValue;
-        element.style.opacity = '0'; element.style.transform = 'translateY(-20px)';
-        stackContainer.insertBefore(element, stackContainer.lastElementChild); // Insertar antes de la base
-        setTimeout(() => { element.style.opacity = '1'; element.style.transform = 'translateY(0)'; }, 10);
+        stackContainer.insertBefore(element, stackContainer.querySelector('.stack-base'));
+        element.style.opacity = '0'; setTimeout(() => { element.style.opacity = '1'; }, 10);
 
-        // Push DS
+        // Push DS (pila principal)
         stack.push(elementValue);
         stackInput.value = '';
 
-        // Renderiza para actualizar visualización (quitar msg vacío, bordes, etc.)
-        renderStack(stack, stackContainer); // Llama a renderStack aquí
+        // Renderiza para actualizar visualización (si se necesita limpiar mensaje vacío etc.)
+        renderStack(stack, stackContainer); // Llama a renderStack general
 
-        // Habilitar Pop si la pila ya no está vacía.
+         // Habilitar Pop si la pila ya no está vacía.
          if (!stack.isEmpty()) {
              popButton.disabled = false;
          }
-
-         // Nota: La lógica de desafío o tutorial que depende de addElement no está aquí,
-         // es llamada por el gestor correspondiente (o addElement es llamada por ellos).
     }
 
     function removeElement() {
-        // Si la pila está vacía, alerta y retorna
         if (stack.isEmpty()) { alert('¡La pila está vacía!'); return null; }
         const elements = stackContainer.querySelectorAll('.stack-element');
-        const element = elements[0]; // Elemento superior
+        if (elements.length === 0) return null;
 
-        // Pop DS
+        const element = elements[0]; // Elemento superior visual
+
+        // Pop DS (pila principal)
         const poppedValue = stack.pop();
 
         // Anima salida y remueve DOM
@@ -131,124 +189,144 @@ document.addEventListener('DOMContentLoaded', function() {
         element.style.transform = 'translateY(-20px)';
         setTimeout(() => {
             element.remove();
-            renderStack(stack, stackContainer); // Re-renderiza
+            renderStack(stack, stackContainer); // Re-renderiza pila principal
         }, 300);
 
-        // Deshabilita Pop si cola vacía
+        // Deshabilita Pop si pila principal vacía
         popButton.disabled = stack.isEmpty();
 
-        // Retorna el valor sacado (usado por el manejador de evento o tutorial)
         return poppedValue;
     }
     // --- Fin Funciones Operación/Visualización ---
 
 
-    // --- Lógica Desafío (Manejada por Gestor Desafío) ---
-    // --- Fin Lógica Desafío ---
-
-
-    // --- Lógica Tutorial (Manejada por Gestor Tutorial) ---
-    // --- Fin Lógica Tutorial ---
-
-
     // --- Manejadores Eventos ---
+
+    // Manejador para la Pila principal (Input, Push, Pop, Reset general)
     pushButton.addEventListener('click', function() {
-        // Si el tutorial está activo, notificar al gestor tutorial.
-        if (stackTutorial.isActive && stackTutorial.isActive()) { // Verifica si el objeto y el método existen
+        if (stackTutorial.isActive()) {
              stackTutorial.handleOperation('push', stackInput.value);
-         } else if (stackChallenge.isActive && stackChallenge.isActive()) { // Si desafío activo, podría tener lógica aquí
-             // Si el desafío tiene lógica para reaccionar al Push (el juego actual de Pila no la tenía)
-             // podrías llamar a un método del gestor desafío aquí.
-             // stackChallenge.handleOperation('push', stackInput.value);
-             // Si no, simplemente ignora el Push manual durante el desafío de Pila (actualmente el juego no lo usa).
-             alert("Operación PUSH no permitida durante el desafío actual de Pila."); // Mensaje traducido
-         }
-         else {
-             // Si ni tutorial ni desafío activo, ejecutar lógica normal.
+         } else if (threeStackChallenge.isActive()) {
+              // Botón Push deshabilitado durante desafío
+         } else {
              addElement(stackInput.value);
          }
     });
 
     popButton.addEventListener('click', function() {
-        // Obtener el valor antes de decidir quién lo maneja.
-        // Llama a removeElement aquí para que la animación y Pop DS siempre ocurran al hacer clic.
-        const poppedValue = removeElement();
-
-        if (poppedValue !== null) { // Solo si se sacó algo realmente
-            // Si el tutorial está activo, notificar al gestor tutorial.
-            if (stackTutorial.isActive && stackTutorial.isActive()) {
+        if (stackTutorial.isActive()) {
+            const poppedValue = removeElement();
+            if (poppedValue !== null) {
                  stackTutorial.handleOperation('pop', poppedValue);
-             } else if (stackChallenge.isActive && stackChallenge.isActive()) { // Si desafío activo, notificar al gestor desafío
-                // Notificar al gestor desafío que se hizo Pop.
-                // Nota: La lógica recordOutput ya estaba en removeElement antes de modularizar el gestor.
-                // Ahora, recordOutput está en el gestor desafío y es llamado DESDE aquí o DESDE removeElement.
-                // Decidimos llamarlo desde removeElement original (ahora en este archivo)
-                // PERO si el gestor desafío necesita hacer algo *antes* o *en lugar* de removeElement,
-                // habría que cambiar esto. En el último código del gestor desafío, recordOutput era llamado DESDE removeElement.
-                // Moviendo la llamada aquí:
-                stackChallenge.recordOutput(poppedValue); // Llama al método del gestor desafío
-             }
-             // Si ni tutorial ni desafío activo, Pop ya se hizo arriba y no hay más lógica aquí.
-        }
+            }
+         } else if (threeStackChallenge.isActive()) {
+              // Botón Pop deshabilitado durante desafío
+         } else {
+             removeElement();
+         }
     });
 
+    // El botón Reiniciar general (resetButton) ahora debe resetear lo que esté activo.
     resetButton.addEventListener('click', function() {
-         // Lógica: Siempre limpiar DS y Viz. Si desafío/tutorial activo, resetearlos.
-         stack.clear(); // Limpiar la pila
-         renderStack(stack, stackContainer); // Renderizar pila limpia
-
-         if (stackChallenge.isActive && stackChallenge.isActive()) { stackChallenge.reset(); }
-         if (stackTutorial.isActive && stackTutorial.isActive()) { stackTutorial.reset(); }
-
-         popButton.disabled = stack.isEmpty(); // Deshabilitar Pop si vacía
+         if (stackTutorial.isActive()) {
+             stackTutorial.reset();
+         } else if (threeStackChallenge.isActive()) {
+             threeStackChallenge.reset();
+         }
+         // Si nada está activo, o después de resetear tutorial/desafío, limpiar la pila principal y su UI.
+         stack.clear();
+         renderStack(stack, stackContainer);
+         popButton.disabled = stack.isEmpty();
+         enableNormalUI(); // Re-habilitar UI normal (incl. deshabilitar botones movimiento)
+         updateMoveButtonStates(); // Asegurar estado inicial de botones de movimiento
     });
 
     stackInput.addEventListener('keyup', function(event) {
          if (event.key === 'Enter') {
-             // Simular clic en Push. La lógica de quién maneja el Push (tutorial/desafío/normal)
-             // está en el manejador del pushButton.
-              pushButton.click();
-          }
-      });
+               pushButton.click();
+           }
+       });
 
+
+    // Manejador botón Iniciar Desafío
     startChallengeButton.addEventListener('click', function() {
-        // Si tutorial activo, salir del tutorial antes de iniciar desafío.
-        if (stackTutorial.isActive && stackTutorial.isActive()) {
-             if (confirm("Salir del tutorial para iniciar el desafío?")) {
-                 stackTutorial.reset();
-                 // Pequeño retardo para asegurar que el tutorial se resetee
-                 setTimeout(() => {
-                     // Iniciar/resetear desafío normal.
-                     if (stackChallenge.isActive()) { stackChallenge.reset(); } else { stackChallenge.start(); }
-                 }, 50);
+        if (threeStackChallenge.isActive()) {
+            threeStackChallenge.reset();
+            enableNormalUI(); // Re-habilitar UI normal
+             updateMoveButtonStates(); // Asegurar botones de movimiento deshabilitados
+        } else {
+             if (stackTutorial.isActive()) {
+                 if (confirm("Salir del tutorial para iniciar el desafío?")) {
+                     stackTutorial.reset();
+                      // enableNormalUI() ya se llama al resetear tutorial.
+                     setTimeout(() => {
+                         threeStackChallenge.start();
+                         disableNormalUI(); // Deshabilitar UI normal
+                          updateMoveButtonStates(); // Habilitar botones de movimiento según estado inicial
+                     }, 50);
+                 }
+             } else {
+                 threeStackChallenge.start();
+                 disableNormalUI(); // Deshabilitar UI normal
+                 updateMoveButtonStates(); // Habilitar botones de movimiento según estado inicial
              }
-         } else {
-             // Si no hay tutorial activo, iniciar/resetear desafío normal.
-             if (stackChallenge.isActive()) { stackChallenge.reset(); } else { stackChallenge.start(); }
-         }
+        }
     });
 
      // Manejador botón Iniciar Tutorial
      startTutorialButton.addEventListener('click', function() {
-         // Si desafío activo, salir del desafío antes de iniciar tutorial.
-         if (stackChallenge.isActive && stackChallenge.isActive()) {
+         if (threeStackChallenge.isActive()) {
              if (confirm("Salir del desafío para iniciar el tutorial?")) {
-                 stackChallenge.reset();
-                 // Pequeño retardo
+                 threeStackChallenge.reset();
+                  // enableNormalUI() ya se llama al resetear desafío.
                  setTimeout(() => {
                     stackTutorial.startTutorial();
+                    disableNormalUI(); // Deshabilitar UI normal
+                     // updateMoveButtonStates() ya se llama en disableNormalUI
                  }, 50);
              }
          } else {
-             // Si no hay desafío activo, iniciar tutorial normal.
              stackTutorial.startTutorial();
+             disableNormalUI(); // Deshabilitar UI normal
+             // updateMoveButtonStates() ya se llama en disableNormalUI
          }
      });
-    // --- Fin Manejadores Eventos ---
+
+    // --- Manejadores de Eventos para los NUEVOS Botones de Movimiento del Desafío ---
+    // Eliminamos el manejador de eventos por delegación en threeStacksContainer.
+    // Ahora cada botón llama directamente al método performMove del gestor.
+
+    if (moveLeftMiddleBtn) { // Asegurarse de que el botón existe
+        moveLeftMiddleBtn.addEventListener('click', function() {
+            threeStackChallenge.performMove('left', 'middle');
+             updateMoveButtonStates(); // Actualizar estado botones después del movimiento
+        });
+    }
+    if (moveMiddleLeftBtn) {
+         moveMiddleLeftBtn.addEventListener('click', function() {
+             threeStackChallenge.performMove('middle', 'left');
+             updateMoveButtonStates();
+         });
+    }
+    if (moveMiddleRightBtn) {
+         moveMiddleRightBtn.addEventListener('click', function() {
+             threeStackChallenge.performMove('middle', 'right');
+             updateMoveButtonStates();
+         });
+    }
+    if (moveRightMiddleBtn) {
+         moveRightMiddleBtn.addEventListener('click', function() {
+             threeStackChallenge.performMove('right', 'middle');
+             updateMoveButtonStates();
+         });
+    }
+    // --- Fin Manejadores de Eventos Botones de Movimiento ---
 
 
-    // --- Inicialización Vista ---
-    renderStack(stack, stackContainer); // Renderizado inicial
-    popButton.disabled = stack.isEmpty(); // Deshabilita Pop si está vacía al cargar
+    // --- Inicialización Vista (Pila principal) ---
+    renderStack(stack, stackContainer); // Renderizado inicial de la pila principal
+    popButton.disabled = stack.isEmpty(); // Deshabilita Pop si vacía al cargar
+    enableNormalUI(); // Asegurar que la UI normal esté habilitada inicialmente.
+    updateMoveButtonStates(); // Asegurar que los botones de movimiento estén deshabilitados inicialmente.
     // --- Fin Inicialización ---
 });
