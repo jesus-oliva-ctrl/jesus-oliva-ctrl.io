@@ -34,8 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- Instancia del Gestor de Desafíos ---
-    // Creamos una instancia del gestor de desafíos, pasándole todas las dependencias que necesita
-    // (la instancia del ABB, los elementos UI relevantes, las funciones de actualización UI y renderizado).
     const bstChallenge = new BSTChallengeManager({
         bstInstance: bst, // La instancia del árbol
         svgElement: bstSVG, // El elemento SVG principal
@@ -57,31 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // --- Fin Instancia Gestor Desafíos ---
 
-
-    // --- Variables del Desafío (Ya NO están aquí, se gestionan dentro de BSTChallengeManager) ---
-    // let challengeActive = false; ... userClickedSequence = [];
-    // --- Fin Variables Desafío ---
-
-
-    // --- Funciones de Renderizado (Movidas a bst-rendering.js) ---
-    // --- Fin Funciones Renderizado ---
-
-
-    // --- Funciones UI Desafío (updateUserSequence MOVVIDA a bst-challenge-ui.js. enableNodeClicking MOVVIDA a BSTChallengeManager) ---
-    // function enableNodeClicking(...) { ... } // <-- DEFINICIÓN MOVVIDA a BSTChallengeManager
-    // --- Fin Funciones UI Desafío ---
-
-
-    // --- Lógica Desafío (onNodeClick, startChallenge, resetChallenge, checkChallengeCompletion MOVVIDAS a BSTChallengeManager) ---
-    // function onNodeClick(...) { ... } // <-- DEFINICIÓN MOVVIDA a BSTChallengeManager
-    // function startChallenge(...) { ... } // <-- DEFINICIÓN MOVVIDA a BSTChallengeManager
-    // function resetChallenge(...) { ... } // <-- DEFINICIÓN MOVVIDA a BSTChallengeManager
-    // function checkChallengeCompletion(...) { ... } // <-- DEFINICIÓN MOVVIDA a BSTChallengeManager
-    // --- Fin Lógica Desafío ---
-
-
-    // --- Manejadores Eventos ---
-    // Conectan acciones de UI con MÉTODOS de los objetos gestores o funciones importadas.
 
     insertButton.addEventListener('click', function() {
         const value = parseInt(bstInput.value);
@@ -155,10 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
             bstChallenge.start(); // Llama método start del gestor
          }
     });
-
-     // Nota: El manejador de clic en los nodos (bstChallenge.handleNodeClick) se pasa a renderTree.
-     // enableNodeClicking también es un método del gestor ahora.
-    // --- Fin Manejadores Eventos ---
 
 
     // --- Inicialización Vista ---

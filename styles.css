@@ -127,6 +127,30 @@ h3 {
     background-color: #2980b9;
 }
 
+/* Estilos para el indicador de dificultad en las tarjetas del Home */
+.card .difficulty-indicator {
+    font-size: 0.9em;
+    color: #555; 
+    margin-top: 10px; 
+    text-align: center; 
+}
+
+/* Estilos de color para el indicador de dificultad */
+.card .difficulty-indicator.easy {
+    color: #2ecc71; 
+    font-weight: bold; 
+}
+
+.card .difficulty-indicator.medium {
+    color: #f1c40f; 
+     font-weight: bold; 
+}
+
+.card .difficulty-indicator.hard {
+    color: #e74c3c;
+     font-weight: bold;
+}
+
 /* Contenedor de Visualización */
 .visualization-container {
     display: flex;
