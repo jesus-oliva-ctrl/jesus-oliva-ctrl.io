@@ -3,201 +3,2365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorador Estructuras Datos</title> <link rel="stylesheet" href="styles.css">
+    <title>Estructuras de Datos - Visualizador Interactivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style id="app-style">
+        :root {
+            --primary-color: #4C6EF5;
+            --secondary-color: #FC8181;
+            --tertiary-color: #10B981;
+            --background-color: #F8FAFC;
+            --foreground-color: #1E293B;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--foreground-color);
+        }
+
+        .container-app {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(76, 110, 245, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tutorial-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .tutorial-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .visualization-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .challenge-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feedback {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .feedback.error {
+            background-color: #FEE2E2;
+            color: #DC2626;
+            display: block;
+        }
+
+        .feedback.success {
+            background-color: #DCFCE7;
+            color: #16A34A;
+            display: block;
+        }
+
+        .stack-element, .queue-element {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: pop 0.5s;
+        }
+
+        .stack-element {
+            width: 100%;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .queue-element {
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            color: white;
+            margin-right: 5px;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #stack-container, #queue-container {
+            width: 100%;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #stack-container {
+            flex-direction: column-reverse;
+            align-items: center;
+        }
+
+        #queue-container {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .input-field {
+            padding: 8px 12px;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.1);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3b5bdb;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #F56565;
+        }
+
+        .btn-tertiary {
+            background-color: var(--tertiary-color);
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            background-color: #0D9488;
+        }
+
+        .btn-outline {
+            border: 1px solid #CBD5E1;
+            background-color: transparent;
+            color: var(--foreground-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #F1F5F9;
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* BST Specific Styles */
+        #bst-svg {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+        }
+
+        .bst-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bst-node:hover {
+            filter: brightness(1.1);
+        }
+
+        .bst-node circle {
+            fill: var(--tertiary-color);
+            stroke: white;
+            stroke-width: 2px;
+        }
+
+        .bst-node text {
+            font-size: 14px;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .bst-link {
+            fill: none;
+            stroke: #94A3B8;
+            stroke-width: 2px;
+        }
+
+        /* Queue Minigame Styles */
+        .queue-game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .queue-game-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #F1F5F9;
+            border-radius: 8px;
+        }
+
+        .queue-game-queues {
+            display: flex;
+            gap: 30px;
+        }
+
+        .queue-game-queue {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .queue-title {
+            font-weight: bold;
+            color: var(--foreground-color);
+        }
+
+        .queue-display {
+            display: flex;
+            min-height: 80px;
+            width: 100%;
+            background-color: #F8FAFC;
+            border-radius: 8px;
+            padding: 10px;
+            overflow-x: auto;
+            align-items: center;
+        }
+
+        .task-element {
+            width: 60px;
+            height: 60px;
+            background-color: var(--tertiary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .task-timer {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .task-label {
+            font-size: 12px;
+        }
+
+        .queue-game-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        /* Highlight effect */
+        .highlight {
+            animation: highlight 1s ease-in-out;
+        }
+
+        @keyframes highlight {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 255, 0, 0.7); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container-app {
+                padding: 10px;
+            }
+            
+            .nav-container {
+                flex-direction: row;
+                overflow-x: auto;
+                margin-bottom: 15px;
+            }
+            
+            .nav-item {
+                margin-right: 8px;
+                margin-bottom: 0;
+                white-space: nowrap;
+            }
+
+            .queue-game-queues {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Explorador Visual Interactivo de Estructuras de Datos</h1>
-            <p>Explora y aprende estructuras de datos fundamentales</p> </header>
-
-        <nav class="main-nav">
-            <button id="home-btn" class="nav-btn active">Inicio</button>
-            <button id="stack-btn" class="nav-btn">Pila</button>
-            <button id="queue-btn" class="nav-btn">Cola</button>
-            <button id="bst-btn" class="nav-btn">Árbol Binario de Búsqueda</button>
-        </nav>
-
-        <main id="content-area">
-            <section id="home-view" class="view active">
-                <h2>¡Bienvenido!</h2> <p>Esta herramienta interactiva te ayuda a aprender sobre tres estructuras de datos:</p> <div class="card-container">
-                    <div class="card" id="stack-card">
-                        <h3>Pila</h3>
-                        <p>Sigue el principio Último en Entrar, Primero en Salir (LIFO).</p> <div class="difficulty-indicator easy">Dificultad: Fácil</div>
-                        <button class="explore-btn" data-target="stack">Explorar Pila</button>
+    <div class="container-app">
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Navigation Sidebar -->
+            <div class="w-full md:w-1/5">
+                <div class="nav-container flex flex-col">
+                    <div class="logo mb-6">
+                        <h1 class="text-2xl font-bold text-center md:text-left">EstruData</h1>
+                        <p class="text-sm text-gray-500 text-center md:text-left">Visualizador de Estructuras</p>
                     </div>
-
-                    <div class="card" id="queue-card">
-                        <h3>Cola</h3>
-                        <p>Sigue el principio Primero en Entrar, Primero en Salir (FIFO).</p> <div class="difficulty-indicator medium">Dificultad: Medio</div>
-                        <button class="explore-btn" data-target="queue">Explorar Cola</button>
+                    <div id="stack-nav" class="nav-item active">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Pila (Stack)</span>
                     </div>
-
-                    <div class="card" id="bst-card">
-                        <h3>Árbol Binario de Búsqueda</h3>
-                        <p>Estructura jerárquica para búsqueda eficiente.</p> <div class="difficulty-indicator hard">Dificultad: Difícil</div>
-                        <button class="explore-btn" data-target="bst">Explorar ABB</button>
+                    <div id="queue-nav" class="nav-item">
+                        <i class="fas fa-people-line"></i>
+                        <span>Cola (Queue)</span>
+                    </div>
+                    <div id="bst-nav" class="nav-item">
+                        <i class="fas fa-diagram-project"></i>
+                        <span>Árbol BST</span>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="stack-view" class="view">
-                <h2>Visualización de Pila</h2>
-                <p>LIFO: El último en entrar es el primero en salir.</p> <div class="info-container">
-                    <div id="stack-how-it-works" class="info-section">
-                        <h3>Cómo Funciona</h3>
-                        <p>Una Pila es como un tubo cerrado por abajo:</p> <ul>
-                            <li><Span class="glossary-term">Push</span>: Añadir un elemento a la cima de la pila</li>
-                            <li><Span class="glossary-term">Pop</span>: Remover el elemento de la cima de la pila</li>
-                            <li><Span class="glossary-term">LIFO</Span> (Last-In-First-Out): El último elemento añadido a la pila es el primero en ser removido</li>
-                            <li><Span class="glossary-term">Peek/Top</Span>: Ver el elemento de la cima sin removerlo</li>
-                        </ul>
-                        <p>Solo accedes al elemento superior.</p> </div>
-
-                    <div class="info-section">
-                        <h3>Ejemplos Reales</h3> <ul>
-                            <li><strong>Pila de platos:</strong> Añades y quitas de arriba</li>
-                            <li><strong>Deshacer/Rehacer:</strong> Última acción se revierte primero</li>
-                            <li><strong>Historial navegador:</strong> Botón atrás vuelve a última página visitada</li>
-                            <li><strong>Llamadas funciones (código):</strong> La última función llamada termina primero</li>
-                        </ul>
-                    </div>
-                </div>
-
-                 <button id="stack-start-tutorial" class="action-btn">Iniciar Tutorial Interactivo</button>
-
-
-                <div class="visualization-container">
-                    <div class="control-panel">
-                        <input type="number" id="stack-input" class="ds-input" placeholder="Ingresa un número">
-                        <button id="stack-push" class="action-btn">Push</button>
-                        <button id="stack-pop" class="action-btn">Pop</button>
-                        <button id="stack-reset" class="reset-btn">Reiniciar</button>
-                    </div>
-
-                    <div class="visualization-area">
-                        <div id="stack-container" class="stack-container">
-                            <div class="stack-base">Base</div> </div>
-                    </div>
-                </div>
-
-                <div class="three-stacks-container">
-                    <div id="stack-challenge-left" class="stack-challenge-viz">
-                         <div class="stack-base">Base</div> </div>
-                    <div class="move-buttons">
-                         <button id="move-left-middle" class="action-btn move-btn" disabled>Mover a Medio</button> </div>
-
-
-                    <div id="stack-challenge-middle" class="stack-challenge-viz">
-                         <div class="stack-base">Base</div> </div>
-                    <div class="move-buttons">
-                         <button id="move-middle-left" class="action-btn move-btn" disabled>Mover a Izquierda</button> <button id="move-middle-right" class="action-btn move-btn" disabled>Mover a Derecha</button> </div>
-
-
-                    <div id="stack-challenge-right" class="stack-challenge-viz">
-                         <div class="stack-base">Base</div> </div>
-                     <div class="move-buttons">
-                         <button id="move-right-middle" class="action-btn move-btn" disabled>Mover a Medio</button> </div>
-                </div>
-
-                    <div class="challenge-target-area">
-                        <h4>Objetivo:</h4> <div class="target-stack-config">
-                            <p>Izquierda:</p>
-                            <div id="stack-target-left" class="target-sequence"></div> </div>
-                        <div class="target-stack-config">
-                            <p>Medio:</p>
-                            <div id="stack-target-middle" class="target-sequence"></div> </div>
-                        <div class="target-stack-config">
-                             <p>Derecha:</p>
-                            <div id="stack-target-right" class="target-sequence"></div> </div>
-                    </div>
-
-
-                    <button id="stack-start-challenge" class="challenge-btn">Iniciar Desafío</button>
-
-                    <div id="stack-challenge-status" class="challenge-status"></div> </div>
-
-            <section id="queue-view" class="view">
-                <h2>Visualización de Cola</h2>
-                <p>FIFO: El primero en entrar es el primero en salir.</p> <div class="info-container">
-                    <div class="info-section">
-                        <h3>Cómo Funciona</h3>
-                        <p>Una Cola es como una fila:</p> <ul>
-                            <li><Span class="glossary-term">Enqueue</Span>: Añadir un elemento al final de la cola</li>
-                            <li><Span class="glossary-term">Dequeue</Span>: Remover el elemento del frente de la cola</li>
-                            <li><Span class="glossary-term">FIFO</Span> (First-In-First-Out): El primer elemento añadido a la cola es el primero en ser removido</li>
-                            <li><Span class="glossary-term">Front</Span>: El primer elemento en la cola (el próximo a ser removido)</li>
-                            <li><Span class="glossary-term">Rear</Span>: El último elemento en la cola (el más recientemente añadido)</li>
-                        </ul>
-                        <p>Entran por un lado, salen por el otro.</p> </div>
-
-                    <div class="info-section">
-                        <h3>Ejemplos Reales</h3> <ul>
-                            <li><strong>Esperar en línea:</strong> Primero en llegar, primero atendido</li>
-                            <li><strong>Cola impresión:</strong> Trabajos se procesan en orden</li>
-                            <li><strong>Servicio al cliente:</strong> Llamadas atendidas en orden</li>
-                            <li><strong>Semáforos:</strong> Autos cruzan en orden de llegada</li>
-                            <li><strong>Planificación tareas (SO):</strong> Procesos gestionados en fila</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="visualization-container">
-                    <div class="control-panel">
-                        <input type="number" id="queue-input" class="ds-input" placeholder="Ingresa un número">
-                        <button id="queue-enqueue" class="action-btn">Enqueue</button>
-                        <button id="queue-dequeue" class="action-btn">Dequeue</button>
-                        <button id="queue-reset" class="reset-btn">Reiniciar</button>
-                    </div>
-
-                    <div class="visualization-area">
-                        <div id="queue-container" class="queue-container">
+            <!-- Main Content -->
+            <div class="w-full md:w-4/5">
+                <!-- Stack Section -->
+                <div id="stack-section" class="section active">
+                    <h2 class="text-2xl font-bold mb-4">Pila (Stack) - LIFO</h2>
+                    
+                    <!-- Tutorial Container -->
+                    <div class="tutorial-container">
+                        <div id="stack-tutorial-container">
+                            <div class="tutorial-title" id="stack-tutorial-title">Bienvenido a la Pila (Stack)</div>
+                            <div class="tutorial-content" id="stack-tutorial-content">
+                                Una pila es una estructura de datos que sigue el principio LIFO (Last In, First Out) - último en entrar, primero en salir. Imagina una pila de platos: solo puedes agregar o quitar platos desde la parte superior.
                             </div>
-                    </div>
-                </div>
-
-                <div class="challenge-container">
-                    <h3>Desafío Cola</h3> <p id="queue-challenge-description">Usa DEQUEUE para procesar en orden de llegada.</p> <div id="queue-arriving-elements" class="arriving-elements"></div>
-                    <div id="queue-processed-elements" class="processed-elements"></div>
-                    <button id="queue-start-challenge" class="challenge-btn">Iniciar Desafío</button>
-                    <div id="queue-challenge-status" class="challenge-status"></div>
-                </div>
-            </section>
-
-            <section id="bst-view" class="view">
-                <h2>Visualización Árbol Binario de Búsqueda</h2> <p>Valores menores a la izquierda, mayores a la derecha.</p> <div class="visualization-container">
-                    <div class="control-panel">
-                        <input type="number" id="bst-input" class="ds-input" placeholder="Ingresa un número">
-                        <button id="bst-insert" class="action-btn">Insertar</button>
-                        <button id="bst-reset" class="reset-btn">Reiniciar</button>
-                        <div class="traversal-controls">
-                            <p>Recorridos:</p> <button id="bst-inorder" class="traversal-btn">In-order</button>
-                            <button id="bst-preorder" class="traversal-btn">Pre-order</button>
-                            <button id="bst-postorder" class="traversal-btn">Post-order</button>
+                            <div class="tutorial-buttons">
+                                <button id="stack-tutorial-prev" class="btn btn-outline" disabled>
+                                    <i class="fas fa-arrow-left"></i> Anterior
+                                </button>
+                                <button id="stack-tutorial-next" class="btn btn-primary">
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="visualization-area">
-                        <div id="bst-container" class="bst-container">
-                            <svg id="bst-svg" width="100%" height="400"></svg>
+                    
+                    <!-- Visualization Container -->
+                    <div class="visualization-container">
+                        <div id="stack-container"></div>
+                    </div>
+                    
+                    <!-- Controls Container -->
+                    <div class="controls-container">
+                        <input type="number" id="stack-input" class="input-field" placeholder="Valor">
+                        <button id="stack-push" class="btn btn-primary">
+                            <i class="fas fa-arrow-down"></i> Push
+                        </button>
+                        <button id="stack-pop" class="btn btn-secondary">
+                            <i class="fas fa-arrow-up"></i> Pop
+                        </button>
+                        <button id="stack-reset" class="btn btn-outline">
+                            <i class="fas fa-rotate"></i> Reiniciar
+                        </button>
+                        <div id="stack-feedback" class="feedback"></div>
+                    </div>
+                    
+                    <!-- Challenge Container -->
+                    <div class="challenge-container">
+                        <h3 class="text-lg font-semibold mb-3">Desafío: ¡Ordena las Pilas!</h3>
+                        <p class="mb-4">Utiliza las tres pilas para ordenar todos los elementos en la secuencia correcta.</p>
+                        
+                        <div id="stack-challenge-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <!-- Will be populated by the challenge manager -->
                         </div>
-                        <div id="traversal-result" class="traversal-result"></div>
+                        
+                        <div class="mt-4 flex justify-between">
+                            <span id="stack-challenge-status"></span>
+                            <button id="stack-start-challenge" class="btn btn-tertiary">
+                                <i class="fas fa-play"></i> Iniciar Desafío
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="challenge-container">
-                    <h3>Desafío ABB</h3> <p id="bst-challenge-description">Click nodos en orden recorrido:</p> <div id="bst-traversal-type" class="traversal-type"></div>
-                    <div id="bst-user-sequence" class="user-sequence"></div>
-                    <button id="bst-start-challenge" class="challenge-btn">Iniciar Desafío</button>
-                    <div id="bst-challenge-status" class="challenge-status"></div>
+                
+                <!-- Queue Section -->
+                <div id="queue-section" class="section">
+                    <h2 class="text-2xl font-bold mb-4">Cola (Queue) - FIFO</h2>
+                    
+                    <!-- Tutorial Container -->
+                    <div class="tutorial-container">
+                        <div id="queue-tutorial-container">
+                            <div class="tutorial-title" id="queue-tutorial-title">Bienvenido a la Cola (Queue)</div>
+                            <div class="tutorial-content" id="queue-tutorial-content">
+                                Una cola es una estructura de datos que sigue el principio FIFO (First In, First Out) - primero en entrar, primero en salir. Piensa en una fila de personas esperando: la primera persona en llegar es la primera en ser atendida.
+                            </div>
+                            <div class="tutorial-buttons">
+                                <button id="queue-tutorial-prev" class="btn btn-outline" disabled>
+                                    <i class="fas fa-arrow-left"></i> Anterior
+                                </button>
+                                <button id="queue-tutorial-next" class="btn btn-primary">
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization Container -->
+                    <div class="visualization-container">
+                        <div id="queue-container"></div>
+                    </div>
+                    
+                    <!-- Controls Container -->
+                    <div class="controls-container">
+                        <input type="number" id="queue-input" class="input-field" placeholder="Valor">
+                        <button id="queue-enqueue" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Enqueue
+                        </button>
+                        <button id="queue-dequeue" class="btn btn-secondary">
+                            <i class="fas fa-minus"></i> Dequeue
+                        </button>
+                        <button id="queue-reset" class="btn btn-outline">
+                            <i class="fas fa-rotate"></i> Reiniciar
+                        </button>
+                        <div id="queue-feedback" class="feedback"></div>
+                    </div>
+                    
+                    <!-- Mini-game Container -->
+                    <div class="challenge-container">
+                        <h3 class="text-lg font-semibold mb-3">Mini-juego: Procesador de Tareas</h3>
+                        <p class="mb-4">Gestiona dos colas para completar la mayor cantidad de tareas posible antes de que se acabe el tiempo.</p>
+                        
+                        <div id="queue-game-container" class="queue-game-container">
+                            <div class="queue-game-stats">
+                                <div>
+                                    <span class="font-bold">Tiempo:</span>
+                                    <span id="queue-game-timer">02:00</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold">Puntuación:</span>
+                                    <span id="queue-game-score">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="queue-game-queues">
+                                <div class="queue-game-queue">
+                                    <div class="queue-title">Cola Principal (Velocidad Normal)</div>
+                                    <div id="primary-queue" class="queue-display"></div>
+                                    <button id="divert-task" class="btn btn-secondary" disabled>
+                                        <i class="fas fa-arrow-right-arrow-left"></i> Desviar Tarea
+                                    </button>
+                                </div>
+                                <div class="queue-game-queue">
+                                    <div class="queue-title">Cola Secundaria (Velocidad Media)</div>
+                                    <div id="secondary-queue" class="queue-display"></div>
+                                    <button id="reinsert-task" class="btn btn-primary" disabled>
+                                        <i class="fas fa-arrow-right-to-bracket"></i> Reinsertar Tarea
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="queue-game-controls">
+                                <button id="start-game" class="btn btn-tertiary">
+                                    <i class="fas fa-play"></i> Iniciar Juego
+                                </button>
+                                <button id="reset-game" class="btn btn-outline" disabled>
+                                    <i class="fas fa-rotate"></i> Reiniciar Juego
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Ingenieria de Software - Universidad Catolica Boliviana</p> </footer>
+                
+                <!-- BST Section -->
+                <div id="bst-section" class="section">
+                    <h2 class="text-2xl font-bold mb-4">Árbol Binario de Búsqueda (BST)</h2>
+                    
+                    <!-- Tutorial Container -->
+                    <div class="tutorial-container">
+                        <div id="bst-tutorial-container">
+                            <div class="tutorial-title" id="bst-tutorial-title">Bienvenido al Árbol Binario de Búsqueda</div>
+                            <div class="tutorial-content" id="bst-tutorial-content">
+                                Un Árbol Binario de Búsqueda (BST) es una estructura de datos jerárquica donde cada nodo tiene máximo dos hijos. Para todo nodo, los valores en su subárbol izquierdo son menores, y los valores en su subárbol derecho son mayores.
+                            </div>
+                            <div class="tutorial-buttons">
+                                <button id="bst-tutorial-prev" class="btn btn-outline" disabled>
+                                    <i class="fas fa-arrow-left"></i> Anterior
+                                </button>
+                                <button id="bst-tutorial-next" class="btn btn-primary">
+                                    Siguiente <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization Container -->
+                    <div class="visualization-container">
+                        <svg id="bst-svg"></svg>
+                    </div>
+                    
+                    <!-- Controls Container -->
+                    <div class="controls-container">
+                        <input type="number" id="bst-input" class="input-field" placeholder="Valor">
+                        <button id="bst-insert" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Insertar
+                        </button>
+                        <button id="bst-search" class="btn btn-secondary">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <button id="bst-delete" class="btn btn-outline">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                        <button id="bst-reset" class="btn btn-outline">
+                            <i class="fas fa-rotate"></i> Reiniciar
+                        </button>
+                        <div id="bst-feedback" class="feedback"></div>
+                    </div>
+                    
+                    <!-- Traversal Controls -->
+                    <div class="controls-container">
+                        <div class="font-semibold mr-4">Recorridos:</div>
+                        <button id="bst-inorder" class="btn btn-tertiary">
+                            <i class="fas fa-arrow-right-arrow-left"></i> In-Order
+                        </button>
+                        <button id="bst-preorder" class="btn btn-tertiary">
+                            <i class="fas fa-arrow-down"></i> Pre-Order
+                        </button>
+                        <button id="bst-postorder" class="btn btn-tertiary">
+                            <i class="fas fa-arrow-up"></i> Post-Order
+                        </button>
+                        <div id="traversal-result" class="mt-2 text-sm"></div>
+                    </div>
+                    
+                    <!-- Challenge Container -->
+                    <div class="challenge-container">
+                        <h3 class="text-lg font-semibold mb-3">Desafío: Recorridos del Árbol</h3>
+                        <p class="mb-4">Haz clic en los nodos en el orden correcto según el tipo de recorrido indicado.</p>
+                        
+                        <div id="bst-challenge-container" class="mt-4">
+                            <div class="mb-2">
+                                <span class="font-bold">Tipo de recorrido:</span>
+                                <span id="bst-challenge-type"></span>
+                            </div>
+                            <div>
+                                <span class="font-bold">Tu secuencia:</span>
+                                <span id="bst-challenge-sequence"></span>
+                            </div>
+                            <svg id="bst-challenge-svg" class="w-full h-64 mt-4 border border-gray-200 rounded-lg"></svg>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-between">
+                            <span id="bst-challenge-status"></span>
+                            <button id="bst-start-challenge" class="btn btn-tertiary">
+                                <i class="fas fa-play"></i> Iniciar Desafío
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="app.js" type="module"></script>
-    <script src="stack/stack.js" type="module"></script> <script src="queue/queue.js" type="module"></script> <script src="bst/binary_tree.js" type="module"></script> </body>
+    <script id="app-script">
+        // Base application controller
+        const app = {
+            init() {
+                // Initialize navigation
+                document.getElementById('stack-nav').addEventListener('click', () => this.showSection('stack'));
+                document.getElementById('queue-nav').addEventListener('click', () => this.showSection('queue'));
+                document.getElementById('bst-nav').addEventListener('click', () => this.showSection('bst'));
+
+                // Initialize modules
+                stackModule.init();
+                queueModule.init();
+                bstModule.init();
+            },
+
+            showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Hide all nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Show selected section and activate nav item
+                document.getElementById(`${sectionName}-section`).classList.add('active');
+                document.getElementById(`${sectionName}-nav`).classList.add('active');
+            }
+        };
+
+        // Stack module
+        const stackLogic = {
+            items: [],
+            
+            push(value) {
+                if (value !== undefined && value !== null && value !== '') {
+                    this.items.push(value);
+                    return true;
+                }
+                return false;
+            },
+            
+            pop() {
+                if (this.isEmpty()) {
+                    return null;
+                }
+                return this.items.pop();
+            },
+            
+            peek() {
+                if (this.isEmpty()) {
+                    return null;
+                }
+                return this.items[this.items.length - 1];
+            },
+            
+            isEmpty() {
+                return this.items.length === 0;
+            },
+            
+            size() {
+                return this.items.length;
+            },
+            
+            clear() {
+                this.items = [];
+            },
+
+            getItems() {
+                return [...this.items];
+            }
+        };
+
+        const stackRendering = {
+            container: null,
+            
+            init(containerId) {
+                this.container = document.getElementById(containerId);
+            },
+            
+            render(items) {
+                // Clear the container
+                this.container.innerHTML = '';
+                
+                // Render each item
+                for (const item of items) {
+                    const element = document.createElement('div');
+                    element.className = 'stack-element';
+                    element.textContent = item;
+                    this.container.appendChild(element);
+                }
+                
+                // If stack is empty, show a placeholder
+                if (items.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-400 italic text-center p-4';
+                    emptyMsg.textContent = 'La pila está vacía';
+                    this.container.appendChild(emptyMsg);
+                }
+            },
+            
+            highlightTop() {
+                const elements = this.container.querySelectorAll('.stack-element');
+                if (elements.length > 0) {
+                    const topElement = elements[0];
+                    topElement.classList.add('highlight');
+                    
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        topElement.classList.remove('highlight');
+                    }, 1000);
+                }
+            }
+        };
+
+        const stackTutorial = {
+            steps: [
+                {
+                    title: "Bienvenido a la Pila (Stack)",
+                    content: "Una pila es una estructura de datos que sigue el principio LIFO (Last In, First Out) - último en entrar, primero en salir. Imagina una pila de platos: solo puedes agregar o quitar platos desde la parte superior."
+                },
+                {
+                    title: "Operación Push",
+                    content: "La operación 'Push' agrega un elemento a la parte superior de la pila. Para agregar un elemento, ingresa un valor numérico en el campo de entrada y haz clic en el botón 'Push'."
+                },
+                {
+                    title: "Operación Pop",
+                    content: "La operación 'Pop' elimina y devuelve el elemento superior de la pila. Cuando haces clic en el botón 'Pop', el elemento superior se elimina de la pila."
+                },
+                {
+                    title: "Aplicaciones de las Pilas",
+                    content: "Las pilas se utilizan en muchas aplicaciones: gestión de la memoria de programas (pila de llamadas), historial de navegación web, algoritmos de búsqueda y recorrido, evaluación de expresiones matemáticas, funciones Deshacer/Rehacer, entre otros."
+                },
+                {
+                    title: "¡Ahora es tu turno!",
+                    content: "Prueba a agregar algunos elementos a la pila con 'Push' y luego a quitarlos con 'Pop'. Observa cómo el último elemento agregado es siempre el primero en salir (LIFO)."
+                }
+            ],
+            currentStep: 0,
+            titleElement: null,
+            contentElement: null,
+            prevButton: null,
+            nextButton: null,
+            
+            init(titleId, contentId, prevId, nextId) {
+                this.titleElement = document.getElementById(titleId);
+                this.contentElement = document.getElementById(contentId);
+                this.prevButton = document.getElementById(prevId);
+                this.nextButton = document.getElementById(nextId);
+                
+                this.prevButton.addEventListener('click', () => this.prevStep());
+                this.nextButton.addEventListener('click', () => this.nextStep());
+                
+                this.updateContent();
+            },
+            
+            updateContent() {
+                const step = this.steps[this.currentStep];
+                this.titleElement.textContent = step.title;
+                this.contentElement.textContent = step.content;
+                
+                // Update button states
+                this.prevButton.disabled = this.currentStep === 0;
+                this.nextButton.disabled = this.currentStep === this.steps.length - 1;
+            },
+            
+            nextStep() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    this.updateContent();
+                }
+            },
+            
+            prevStep() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    this.updateContent();
+                }
+            },
+            
+            reset() {
+                this.currentStep = 0;
+                this.updateContent();
+            }
+        };
+
+        const threeStackChallengeManager = {
+            stacks: [],
+            targetSequence: [],
+            isActive: false,
+            
+            init(containerElement) {
+                this.containerElement = containerElement;
+                
+                // Initialize three stacks
+                this.stacks = [
+                    { id: 'stack1', items: [] },
+                    { id: 'stack2', items: [] },
+                    { id: 'stack3', items: [] }
+                ];
+            },
+            
+            startChallenge() {
+                // Clear stacks
+                this.stacks.forEach(stack => {
+                    stack.items = [];
+                });
+                
+                // Generate random sequence
+                this.targetSequence = [];
+                const numElements = 5 + Math.floor(Math.random() * 3); // 5-7 elements
+                for (let i = 0; i < numElements; i++) {
+                    this.targetSequence.push(i + 1);
+                }
+                
+                // Shuffle and place in the first stack
+                this.stacks[0].items = this.shuffleArray([...this.targetSequence]);
+                
+                // Render the challenge
+                this.renderChallenge();
+                
+                // Update status
+                document.getElementById('stack-challenge-status').textContent = 'Ordena los elementos del 1 al ' + numElements + ' en la tercera pila';
+                
+                // Activate challenge
+                this.isActive = true;
+                
+                // Update button
+                document.getElementById('stack-start-challenge').textContent = 'Reiniciar Desafío';
+            },
+            
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            },
+            
+            renderChallenge() {
+                this.containerElement.innerHTML = '';
+                
+                // Create and render all three stacks
+                this.stacks.forEach((stack, index) => {
+                    const stackColumn = document.createElement('div');
+                    stackColumn.className = 'flex flex-col items-center';
+                    
+                    // Stack title
+                    const title = document.createElement('div');
+                    title.className = 'font-semibold mb-2';
+                    title.textContent = `Pila ${index + 1}`;
+                    stackColumn.appendChild(title);
+                    
+                    // Stack container
+                    const stackContainer = document.createElement('div');
+                    stackContainer.id = stack.id;
+                    stackContainer.className = 'w-full h-60 border border-gray-200 rounded-lg p-2 flex flex-col-reverse items-center overflow-hidden';
+                    
+                    // Render stack items
+                    if (stack.items.length === 0) {
+                        const emptyMsg = document.createElement('div');
+                        emptyMsg.className = 'text-gray-400 italic text-center';
+                        emptyMsg.textContent = 'Vacía';
+                        stackContainer.appendChild(emptyMsg);
+                    } else {
+                        stack.items.forEach(item => {
+                            const element = document.createElement('div');
+                            element.className = 'stack-element mb-1 w-11/12';
+                            element.textContent = item;
+                            stackContainer.appendChild(element);
+                        });
+                    }
+                    
+                    stackColumn.appendChild(stackContainer);
+                    
+                    // Add buttons for Pop and Push operations
+                    const buttonsContainer = document.createElement('div');
+                    buttonsContainer.className = 'flex gap-2 mt-2';
+                    
+                    // Create buttons for other stacks
+                    this.stacks.forEach((targetStack, targetIndex) => {
+                        if (targetIndex !== index) {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-sm btn-primary py-1 px-3 text-sm';
+                            button.textContent = `→ Pila ${targetIndex + 1}`;
+                            
+                            button.addEventListener('click', () => {
+                                this.moveElement(index, targetIndex);
+                            });
+                            
+                            buttonsContainer.appendChild(button);
+                        }
+                    });
+                    
+                    stackColumn.appendChild(buttonsContainer);
+                    this.containerElement.appendChild(stackColumn);
+                });
+            },
+            
+            moveElement(fromIndex, toIndex) {
+                if (!this.isActive) return;
+                
+                const fromStack = this.stacks[fromIndex];
+                const toStack = this.stacks[toIndex];
+                
+                // Check if source stack has elements
+                if (fromStack.items.length === 0) {
+                    document.getElementById('stack-challenge-status').textContent = '¡No puedes mover de una pila vacía!';
+                    return;
+                }
+                
+                // Move the top element
+                const item = fromStack.items.pop();
+                toStack.items.push(item);
+                
+                // Re-render the challenge
+                this.renderChallenge();
+                
+                // Check if challenge is complete
+                this.checkCompletion();
+            },
+            
+            checkCompletion() {
+                // Check if the third stack has all elements in ascending order
+                const thirdStack = this.stacks[2].items;
+                
+                if (thirdStack.length === this.targetSequence.length) {
+                    // Check if the order is correct (ascending)
+                    let isOrdered = true;
+                    for (let i = 0; i < thirdStack.length - 1; i++) {
+                        if (thirdStack[i] > thirdStack[i + 1]) {
+                            isOrdered = false;
+                            break;
+                        }
+                    }
+                    
+                    if (isOrdered) {
+                        document.getElementById('stack-challenge-status').textContent = '¡Desafío completado! Has ordenado correctamente la secuencia.';
+                        this.isActive = false;
+                        document.getElementById('stack-start-challenge').textContent = 'Iniciar Nuevo Desafío';
+                    }
+                }
+            }
+        };
+
+        const stackChallengeUI = {
+            init(containerId, startButtonId) {
+                this.container = document.getElementById(containerId);
+                this.startButton = document.getElementById(startButtonId);
+                
+                threeStackChallengeManager.init(this.container);
+                
+                this.startButton.addEventListener('click', () => {
+                    threeStackChallengeManager.startChallenge();
+                });
+            }
+        };
+
+        const stackModule = {
+            init() {
+                // Initialize components
+                stackRendering.init('stack-container');
+                stackTutorial.init('stack-tutorial-title', 'stack-tutorial-content', 'stack-tutorial-prev', 'stack-tutorial-next');
+                stackChallengeUI.init('stack-challenge-container', 'stack-start-challenge');
+                
+                // Add event listeners
+                document.getElementById('stack-push').addEventListener('click', () => this.push());
+                document.getElementById('stack-pop').addEventListener('click', () => this.pop());
+                document.getElementById('stack-reset').addEventListener('click', () => this.reset());
+                
+                // Initialize UI
+                this.reset();
+                this.updateUI();
+            },
+            
+            push() {
+                const inputElement = document.getElementById('stack-input');
+                const value = inputElement.value.trim();
+                
+                if (value === '') {
+                    this.showFeedback('Por favor, ingresa un valor', 'error');
+                    return;
+                }
+                
+                const success = stackLogic.push(parseInt(value, 10));
+                
+                if (success) {
+                    inputElement.value = '';
+                    this.updateUI();
+                    this.showFeedback(`Elemento ${value} agregado a la pila`, 'success');
+                } else {
+                    this.showFeedback('No se pudo agregar el elemento', 'error');
+                }
+            },
+            
+            pop() {
+                if (stackLogic.isEmpty()) {
+                    this.showFeedback('La pila está vacía', 'error');
+                    return;
+                }
+                
+                const value = stackLogic.pop();
+                this.updateUI();
+                this.showFeedback(`Elemento ${value} eliminado de la pila`, 'success');
+            },
+            
+            reset() {
+                stackLogic.clear();
+                document.getElementById('stack-input').value = '';
+                this.updateUI();
+                this.hideFeedback();
+            },
+            
+            updateUI() {
+                stackRendering.render(stackLogic.getItems());
+            },
+            
+            showFeedback(message, type) {
+                const feedbackElement = document.getElementById('stack-feedback');
+                feedbackElement.textContent = message;
+                feedbackElement.className = `feedback ${type}`;
+                
+                // Auto-hide feedback after 3 seconds
+                setTimeout(() => {
+                    this.hideFeedback();
+                }, 3000);
+            },
+            
+            hideFeedback() {
+                const feedbackElement = document.getElementById('stack-feedback');
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        };
+
+        // Queue module
+        const queueLogic = {
+            items: [],
+            
+            enqueue(value) {
+                if (value !== undefined && value !== null && value !== '') {
+                    this.items.push(value);
+                    return true;
+                }
+                return false;
+            },
+            
+            dequeue() {
+                if (this.isEmpty()) {
+                    return null;
+                }
+                return this.items.shift();
+            },
+            
+            front() {
+                if (this.isEmpty()) {
+                    return null;
+                }
+                return this.items[0];
+            },
+            
+            isEmpty() {
+                return this.items.length === 0;
+            },
+            
+            size() {
+                return this.items.length;
+            },
+            
+            clear() {
+                this.items = [];
+            },
+            
+            getItems() {
+                return [...this.items];
+            }
+        };
+
+        const queueRendering = {
+            container: null,
+            
+            init(containerId) {
+                this.container = document.getElementById(containerId);
+            },
+            
+            render(items) {
+                // Clear the container
+                this.container.innerHTML = '';
+                
+                // Render each item
+                for (const item of items) {
+                    const element = document.createElement('div');
+                    element.className = 'queue-element';
+                    element.textContent = item;
+                    this.container.appendChild(element);
+                }
+                
+                // If queue is empty, show a placeholder
+                if (items.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-400 italic text-center p-4';
+                    emptyMsg.textContent = 'La cola está vacía';
+                    this.container.appendChild(emptyMsg);
+                }
+            },
+            
+            highlightFront() {
+                const elements = this.container.querySelectorAll('.queue-element');
+                if (elements.length > 0) {
+                    const frontElement = elements[0];
+                    frontElement.classList.add('highlight');
+                    
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        frontElement.classList.remove('highlight');
+                    }, 1000);
+                }
+            },
+            
+            highlightRear() {
+                const elements = this.container.querySelectorAll('.queue-element');
+                if (elements.length > 0) {
+                    const rearElement = elements[elements.length - 1];
+                    rearElement.classList.add('highlight');
+                    
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        rearElement.classList.remove('highlight');
+                    }, 1000);
+                }
+            }
+        };
+
+        const queueTutorial = {
+            steps: [
+                {
+                    title: "Bienvenido a la Cola (Queue)",
+                    content: "Una cola es una estructura de datos que sigue el principio FIFO (First In, First Out) - primero en entrar, primero en salir. Piensa en una fila de personas esperando: la primera persona en llegar es la primera en ser atendida."
+                },
+                {
+                    title: "Operación Enqueue",
+                    content: "La operación 'Enqueue' agrega un elemento al final de la cola. Para agregar un elemento, ingresa un valor numérico en el campo de entrada y haz clic en el botón 'Enqueue'."
+                },
+                {
+                    title: "Operación Dequeue",
+                    content: "La operación 'Dequeue' elimina y devuelve el elemento del frente de la cola. Cuando haces clic en el botón 'Dequeue', el primer elemento que entró se elimina de la cola."
+                },
+                {
+                    title: "Aplicaciones de las Colas",
+                    content: "Las colas se utilizan en muchas aplicaciones: sistemas operativos (gestión de procesos/impresiones), gestión de búferes, programación por eventos, algoritmos de búsqueda por anchura (BFS), sistemas de mensajería, entre otros."
+                },
+                {
+                    title: "¡Ahora es tu turno!",
+                    content: "Prueba a agregar algunos elementos a la cola con 'Enqueue' y luego a quitarlos con 'Dequeue'. Observa cómo el primer elemento agregado es siempre el primero en salir (FIFO)."
+                }
+            ],
+            currentStep: 0,
+            titleElement: null,
+            contentElement: null,
+            prevButton: null,
+            nextButton: null,
+            
+            init(titleId, contentId, prevId, nextId) {
+                this.titleElement = document.getElementById(titleId);
+                this.contentElement = document.getElementById(contentId);
+                this.prevButton = document.getElementById(prevId);
+                this.nextButton = document.getElementById(nextId);
+                
+                this.prevButton.addEventListener('click', () => this.prevStep());
+                this.nextButton.addEventListener('click', () => this.nextStep());
+                
+                this.updateContent();
+            },
+            
+            updateContent() {
+                const step = this.steps[this.currentStep];
+                this.titleElement.textContent = step.title;
+                this.contentElement.textContent = step.content;
+                
+                // Update button states
+                this.prevButton.disabled = this.currentStep === 0;
+                this.nextButton.disabled = this.currentStep === this.steps.length - 1;
+            },
+            
+            nextStep() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    this.updateContent();
+                }
+            },
+            
+            prevStep() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    this.updateContent();
+                }
+            },
+            
+            reset() {
+                this.currentStep = 0;
+                this.updateContent();
+            }
+        };
+
+        const queueMinigame = {
+            primaryQueue: null,
+            secondaryQueue: null,
+            gameInterval: null,
+            taskGenerationInterval: null,
+            gameTime: 120, // 2 minutes in seconds
+            score: 0,
+            isPlaying: false,
+            
+            init() {
+                this.primaryQueue = {
+                    items: [],
+                    element: document.getElementById('primary-queue')
+                };
+                
+                this.secondaryQueue = {
+                    items: [],
+                    element: document.getElementById('secondary-queue')
+                };
+                
+                // Add event listeners
+                document.getElementById('start-game').addEventListener('click', () => this.startGame());
+                document.getElementById('reset-game').addEventListener('click', () => this.resetGame());
+                document.getElementById('divert-task').addEventListener('click', () => this.divertTask());
+                document.getElementById('reinsert-task').addEventListener('click', () => this.reinsertTask());
+                
+                // Initialize UI
+                this.updateUI();
+            },
+            
+            startGame() {
+                if (this.isPlaying) return;
+                
+                // Reset game state
+                this.resetGame();
+                
+                // Set game as playing
+                this.isPlaying = true;
+                
+                // Update buttons
+                document.getElementById('start-game').disabled = true;
+                document.getElementById('reset-game').disabled = false;
+                
+                // Start generating tasks
+                this.taskGenerationInterval = setInterval(() => this.generateTask(), getRandomInt(3000, 5000));
+                
+                // Start game ticker
+                this.gameInterval = setInterval(() => this.gameTick(), 1000);
+            },
+            
+            resetGame() {
+                // Clear intervals
+                if (this.gameInterval) clearInterval(this.gameInterval);
+                if (this.taskGenerationInterval) clearInterval(this.taskGenerationInterval);
+                
+                // Reset game state
+                this.primaryQueue.items = [];
+                this.secondaryQueue.items = [];
+                this.gameTime = 120;
+                this.score = 0;
+                this.isPlaying = false;
+                
+                // Update UI
+                this.updateUI();
+                this.updateTimerDisplay();
+                this.updateScoreDisplay();
+                
+                // Update buttons
+                document.getElementById('start-game').disabled = false;
+                document.getElementById('reset-game').disabled = true;
+                document.getElementById('divert-task').disabled = true;
+                document.getElementById('reinsert-task').disabled = true;
+            },
+            
+            generateTask() {
+                if (!this.isPlaying) return;
+                
+                // Generate a new task with random time
+                const taskTime = getRandomInt(2, 9);
+                const task = {
+                    id: Date.now(),
+                    time: taskTime
+                };
+                
+                // Add to primary queue
+                this.primaryQueue.items.push(task);
+                
+                // Update UI
+                this.updateUI();
+            },
+            
+            gameTick() {
+                if (!this.isPlaying) return;
+                
+                // Decrease game time
+                this.gameTime--;
+                this.updateTimerDisplay();
+                
+                // Process tasks in primary queue (decrease time by 1)
+                if (this.primaryQueue.items.length > 0) {
+                    const frontTask = this.primaryQueue.items[0];
+                    frontTask.time--;
+                    
+                    // Check if task is completed
+                    if (frontTask.time <= 0) {
+                        this.primaryQueue.items.shift();
+                        this.score++;
+                        this.updateScoreDisplay();
+                    }
+                }
+                
+                // Process tasks in secondary queue (decrease time by 0.5)
+                if (this.secondaryQueue.items.length > 0) {
+                    const frontTask = this.secondaryQueue.items[0];
+                    frontTask.time -= 0.5;
+                    
+                    // Check if task is completed
+                    if (frontTask.time <= 0) {
+                        this.secondaryQueue.items.shift();
+                        this.score++;
+                        this.updateScoreDisplay();
+                    }
+                }
+                
+                // Update UI
+                this.updateUI();
+                
+                // Check if game is over
+                if (this.gameTime <= 0) {
+                    this.endGame();
+                }
+            },
+            
+            divertTask() {
+                if (!this.isPlaying || this.primaryQueue.items.length === 0) return;
+                
+                // Move front task from primary to secondary
+                const task = this.primaryQueue.items.shift();
+                this.secondaryQueue.items.push(task);
+                
+                // Update UI
+                this.updateUI();
+            },
+            
+            reinsertTask() {
+                if (!this.isPlaying || this.secondaryQueue.items.length === 0) return;
+                
+                // Move front task from secondary to front of primary
+                const task = this.secondaryQueue.items.shift();
+                this.primaryQueue.items.unshift(task);
+                
+                // Update UI
+                this.updateUI();
+            },
+            
+            endGame() {
+                // Stop the game
+                clearInterval(this.gameInterval);
+                clearInterval(this.taskGenerationInterval);
+                
+                // Set game as not playing
+                this.isPlaying = false;
+                
+                // Show end game message
+                alert(`¡Juego terminado! Tu puntuación final es: ${this.score}`);
+                
+                // Update buttons
+                document.getElementById('start-game').disabled = false;
+                document.getElementById('reset-game').disabled = true;
+                document.getElementById('divert-task').disabled = true;
+                document.getElementById('reinsert-task').disabled = true;
+            },
+            
+            updateUI() {
+                // Update primary queue
+                this.renderQueue(this.primaryQueue);
+                
+                // Update secondary queue
+                this.renderQueue(this.secondaryQueue);
+                
+                // Update button states
+                document.getElementById('divert-task').disabled = !this.isPlaying || this.primaryQueue.items.length === 0;
+                document.getElementById('reinsert-task').disabled = !this.isPlaying || this.secondaryQueue.items.length === 0;
+            },
+            
+            renderQueue(queue) {
+                queue.element.innerHTML = '';
+                
+                if (queue.items.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-400 italic text-center p-4';
+                    emptyMsg.textContent = 'Cola vacía';
+                    queue.element.appendChild(emptyMsg);
+                } else {
+                    for (const task of queue.items) {
+                        const element = document.createElement('div');
+                        element.className = 'task-element';
+                        
+                        const timer = document.createElement('div');
+                        timer.className = 'task-timer';
+                        timer.textContent = task.time.toFixed(1);
+                        
+                        const label = document.createElement('div');
+                        label.className = 'task-label';
+                        label.textContent = 'Tarea';
+                        
+                        element.appendChild(timer);
+                        element.appendChild(label);
+                        queue.element.appendChild(element);
+                    }
+                }
+            },
+            
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.gameTime / 60);
+                const seconds = this.gameTime % 60;
+                document.getElementById('queue-game-timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            },
+            
+            updateScoreDisplay() {
+                document.getElementById('queue-game-score').textContent = this.score;
+            }
+        };
+
+        const queueModule = {
+            init() {
+                // Initialize components
+                queueRendering.init('queue-container');
+                queueTutorial.init('queue-tutorial-title', 'queue-tutorial-content', 'queue-tutorial-prev', 'queue-tutorial-next');
+                queueMinigame.init();
+                
+                // Add event listeners
+                document.getElementById('queue-enqueue').addEventListener('click', () => this.enqueue());
+                document.getElementById('queue-dequeue').addEventListener('click', () => this.dequeue());
+                document.getElementById('queue-reset').addEventListener('click', () => this.reset());
+                
+                // Initialize UI
+                this.reset();
+                this.updateUI();
+            },
+            
+            enqueue() {
+                const inputElement = document.getElementById('queue-input');
+                const value = inputElement.value.trim();
+                
+                if (value === '') {
+                    this.showFeedback('Por favor, ingresa un valor', 'error');
+                    return;
+                }
+                
+                const success = queueLogic.enqueue(parseInt(value, 10));
+                
+                if (success) {
+                    inputElement.value = '';
+                    this.updateUI();
+                    queueRendering.highlightRear();
+                    this.showFeedback(`Elemento ${value} agregado a la cola`, 'success');
+                } else {
+                    this.showFeedback('No se pudo agregar el elemento', 'error');
+                }
+            },
+            
+            dequeue() {
+                if (queueLogic.isEmpty()) {
+                    this.showFeedback('La cola está vacía', 'error');
+                    return;
+                }
+                
+                queueRendering.highlightFront();
+                
+                // Small delay to show the highlight before removing
+                setTimeout(() => {
+                    const value = queueLogic.dequeue();
+                    this.updateUI();
+                    this.showFeedback(`Elemento ${value} eliminado de la cola`, 'success');
+                }, 500);
+            },
+            
+            reset() {
+                queueLogic.clear();
+                document.getElementById('queue-input').value = '';
+                this.updateUI();
+                this.hideFeedback();
+            },
+            
+            updateUI() {
+                queueRendering.render(queueLogic.getItems());
+            },
+            
+            showFeedback(message, type) {
+                const feedbackElement = document.getElementById('queue-feedback');
+                feedbackElement.textContent = message;
+                feedbackElement.className = `feedback ${type}`;
+                
+                // Auto-hide feedback after 3 seconds
+                setTimeout(() => {
+                    this.hideFeedback();
+                }, 3000);
+            },
+            
+            hideFeedback() {
+                const feedbackElement = document.getElementById('queue-feedback');
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        };
+
+        // BST module
+        const bstLogic = {
+            root: null,
+            
+            insertNode(root, node) {
+                if (node.value < root.value) {
+                    if (root.left === null) {
+                        root.left = node;
+                    } else {
+                        this.insertNode(root.left, node);
+                    }
+                } else {
+                    if (root.right === null) {
+                        root.right = node;
+                    } else {
+                        this.insertNode(root.right, node);
+                    }
+                }
+            },
+            
+            insert(value) {
+                const node = {
+                    value: value,
+                    left: null,
+                    right: null
+                };
+                
+                if (this.root === null) {
+                    this.root = node;
+                } else {
+                    this.insertNode(this.root, node);
+                }
+            },
+            
+            searchNode(node, value) {
+                if (node === null) {
+                    return false;
+                }
+                
+                if (value === node.value) {
+                    return true;
+                }
+                
+                if (value < node.value) {
+                    return this.searchNode(node.left, value);
+                } else {
+                    return this.searchNode(node.right, value);
+                }
+            },
+            
+            search(value) {
+                return this.searchNode(this.root, value);
+            },
+            
+            findMinNode(node) {
+                if (node.left === null) {
+                    return node;
+                } else {
+                    return this.findMinNode(node.left);
+                }
+            },
+            
+            removeNode(node, value) {
+                if (node === null) {
+                    return null;
+                }
+                
+                if (value < node.value) {
+                    node.left = this.removeNode(node.left, value);
+                    return node;
+                } else if (value > node.value) {
+                    node.right = this.removeNode(node.right, value);
+                    return node;
+                } else {
+                    // Case 1: Leaf node (no children)
+                    if (node.left === null && node.right === null) {
+                        return null;
+                    }
+                    
+                    // Case 2: Node with one child
+                    if (node.left === null) {
+                        return node.right;
+                    } else if (node.right === null) {
+                        return node.left;
+                    }
+                    
+                    // Case 3: Node with two children
+                    // Find the successor (smallest node in right subtree)
+                    const successor = this.findMinNode(node.right);
+                    node.value = successor.value;
+                    
+                    // Delete the successor
+                    node.right = this.removeNode(node.right, successor.value);
+                    return node;
+                }
+            },
+            
+            remove(value) {
+                this.root = this.removeNode(this.root, value);
+            },
+            
+            inOrderTraversal(node, result = []) {
+                if (node !== null) {
+                    this.inOrderTraversal(node.left, result);
+                    result.push(node.value);
+                    this.inOrderTraversal(node.right, result);
+                }
+                return result;
+            },
+            
+            preOrderTraversal(node, result = []) {
+                if (node !== null) {
+                    result.push(node.value);
+                    this.preOrderTraversal(node.left, result);
+                    this.preOrderTraversal(node.right, result);
+                }
+                return result;
+            },
+            
+            postOrderTraversal(node, result = []) {
+                if (node !== null) {
+                    this.postOrderTraversal(node.left, result);
+                    this.postOrderTraversal(node.right, result);
+                    result.push(node.value);
+                }
+                return result;
+            },
+            
+            inOrder() {
+                return this.inOrderTraversal(this.root);
+            },
+            
+            preOrder() {
+                return this.preOrderTraversal(this.root);
+            },
+            
+            postOrder() {
+                return this.postOrderTraversal(this.root);
+            },
+            
+            clear() {
+                this.root = null;
+            },
+            
+            getRoot() {
+                return this.root;
+            }
+        };
+
+        const bstRendering = {
+            svg: null,
+            
+            init(svgId) {
+                this.svg = d3.select(`#${svgId}`);
+            },
+            
+            render(root) {
+                // Clear SVG
+                this.svg.selectAll('*').remove();
+                
+                if (root === null) {
+                    this.svg.append('text')
+                        .attr('x', '50%')
+                        .attr('y', '50%')
+                        .attr('text-anchor', 'middle')
+                        .attr('dominant-baseline', 'middle')
+                        .attr('class', 'text-gray-400 italic')
+                        .text('El árbol está vacío');
+                    return;
+                }
+                
+                // Calculate tree layout
+                const treeLayout = d3.tree().size([this.svg.node().clientWidth - 60, this.svg.node().clientHeight - 40]);
+                
+                // Convert BST to hierarchical data for D3
+                const hierarchy = this.convertToHierarchy(root);
+                
+                // Apply layout
+                const treeData = treeLayout(d3.hierarchy(hierarchy));
+                
+                // Create a group for the entire tree
+                const g = this.svg.append('g')
+                    .attr('transform', `translate(30, 20)`);
+                
+                // Draw links
+                g.selectAll('.bst-link')
+                    .data(treeData.links())
+                    .enter()
+                    .append('path')
+                    .attr('class', 'bst-link')
+                    .attr('d', d3.linkVertical()
+                        .x(d => d.x)
+                        .y(d => d.y));
+                
+                // Draw nodes
+                const nodes = g.selectAll('.bst-node')
+                    .data(treeData.descendants())
+                    .enter()
+                    .append('g')
+                    .attr('class', 'bst-node')
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
+                
+                // Add circles for nodes
+                nodes.append('circle')
+                    .attr('r', 20);
+                
+                // Add text labels
+                nodes.append('text')
+                    .text(d => d.data.name);
+            },
+            
+            // Converts BST node structure to hierarchy format for D3
+            convertToHierarchy(node) {
+                if (node === null) return null;
+                
+                const result = {
+                    name: node.value,
+                    children: []
+                };
+                
+                if (node.left !== null) {
+                    result.children.push(this.convertToHierarchy(node.left));
+                }
+                
+                if (node.right !== null) {
+                    result.children.push(this.convertToHierarchy(node.right));
+                }
+                
+                // If there are no children, don't include empty children array
+                if (result.children.length === 0) {
+                    delete result.children;
+                }
+                
+                return result;
+            },
+            
+            highlightPath(path) {
+                // Highlight nodes in the path sequentially
+                let index = 0;
+                
+                const highlightInterval = setInterval(() => {
+                    // Clear previous highlights
+                    this.svg.selectAll('.bst-node circle').attr('fill', '#10B981');
+                    
+                    // Highlight current node
+                    this.svg.selectAll('.bst-node')
+                        .filter(d => d.data.name === path[index])
+                        .select('circle')
+                        .attr('fill', '#FC8181');
+                    
+                    index++;
+                    
+                    // Stop highlighting when all nodes in path are processed
+                    if (index >= path.length) {
+                        clearInterval(highlightInterval);
+                        
+                        // Reset highlights after a delay
+                        setTimeout(() => {
+                            this.svg.selectAll('.bst-node circle').attr('fill', '#10B981');
+                        }, 1000);
+                    }
+                }, 800);
+            }
+        };
+
+        const bstTutorial = {
+            steps: [
+                {
+                    title: "Bienvenido al Árbol Binario de Búsqueda",
+                    content: "Un Árbol Binario de Búsqueda (BST) es una estructura de datos jerárquica donde cada nodo tiene máximo dos hijos. Para todo nodo, los valores en su subárbol izquierdo son menores, y los valores en su subárbol derecho son mayores."
+                },
+                {
+                    title: "Propiedades del BST",
+                    content: "Propiedades clave: 1) Todos los nodos del subárbol izquierdo son menores que el nodo raíz, 2) Todos los nodos del subárbol derecho son mayores que el nodo raíz, 3) Los subárboles izquierdo y derecho también son BSTs, y 4) No hay nodos duplicados (en la implementación estándar)."
+                },
+                {
+                    title: "Operación de Inserción",
+                    content: "Para insertar un valor: 1) Si el árbol está vacío, el valor se convierte en raíz. 2) Si el valor es menor que el nodo actual, ir al subárbol izquierdo. 3) Si el valor es mayor, ir al subárbol derecho. 4) Repetir hasta encontrar un lugar vacío. Prueba insertando algunos valores para ver cómo crece el árbol."
+                },
+                {
+                    title: "Operación de Búsqueda",
+                    content: "Para buscar un valor: 1) Comenzar en la raíz. 2) Si el valor es igual al nodo actual, ¡lo encontramos! 3) Si es menor, buscar en el subárbol izquierdo. 4) Si es mayor, buscar en el subárbol derecho. 5) Si llegamos a un nodo nulo, el valor no está en el árbol. Esta operación tiene complejidad O(log n) en un BST balanceado."
+                },
+                {
+                    title: "Operación de Eliminación - Caso Simple",
+                    content: "Eliminar nodos sin hijos (hojas) o con un solo hijo es relativamente sencillo: simplemente los eliminamos o los reemplazamos por su único hijo, respectivamente."
+                },
+                {
+                    title: "Operación de Eliminación - Caso Complejo",
+                    content: "Eliminar un nodo con dos hijos es más complejo: 1) Encontrar el sucesor in-order (el valor más pequeño en el subárbol derecho). 2) Reemplazar el valor del nodo a eliminar con el valor del sucesor. 3) Eliminar el sucesor de su posición original."
+                },
+                {
+                    title: "Recorrido In-Order",
+                    content: "El recorrido in-order visita primero el subárbol izquierdo, luego el nodo actual, y finalmente el subárbol derecho. En un BST, este recorrido visita los nodos en orden ascendente de sus valores."
+                },
+                {
+                    title: "Recorrido Pre-Order",
+                    content: "El recorrido pre-order visita primero el nodo actual, luego el subárbol izquierdo, y finalmente el subárbol derecho. Es útil para crear una copia del árbol o para serialización."
+                },
+                {
+                    title: "Recorrido Post-Order",
+                    content: "El recorrido post-order visita primero el subárbol izquierdo, luego el subárbol derecho, y finalmente el nodo actual. Es útil para eliminar el árbol completo o evaluar expresiones."
+                },
+                {
+                    title: "Aplicaciones de los BSTs",
+                    content: "Los BSTs se utilizan en muchas aplicaciones: bases de datos para índices, implementaciones de conjuntos y mapas, algoritmos de comprensión como Huffman coding, y para organizar estructuras de datos para búsquedas rápidas."
+                },
+                {
+                    title: "¡Ahora es tu turno!",
+                    content: "Experimenta con las operaciones de inserción, búsqueda, eliminación y con los diferentes tipos de recorridos para comprender mejor cómo funciona un Árbol Binario de Búsqueda."
+                }
+            ],
+            currentStep: 0,
+            titleElement: null,
+            contentElement: null,
+            prevButton: null,
+            nextButton: null,
+            
+            init(titleId, contentId, prevId, nextId) {
+                this.titleElement = document.getElementById(titleId);
+                this.contentElement = document.getElementById(contentId);
+                this.prevButton = document.getElementById(prevId);
+                this.nextButton = document.getElementById(nextId);
+                
+                this.prevButton.addEventListener('click', () => this.prevStep());
+                this.nextButton.addEventListener('click', () => this.nextStep());
+                
+                this.updateContent();
+            },
+            
+            updateContent() {
+                const step = this.steps[this.currentStep];
+                this.titleElement.textContent = step.title;
+                this.contentElement.textContent = step.content;
+                
+                // Update button states
+                this.prevButton.disabled = this.currentStep === 0;
+                this.nextButton.disabled = this.currentStep === this.steps.length - 1;
+            },
+            
+            nextStep() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    this.updateContent();
+                }
+            },
+            
+            prevStep() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    this.updateContent();
+                }
+            },
+            
+            reset() {
+                this.currentStep = 0;
+                this.updateContent();
+            }
+        };
+
+        const bstChallengeManager = {
+            bst: null,
+            traversalType: '',
+            correctSequence: [],
+            userSequence: [],
+            isActive: false,
+            
+            init(svgId) {
+                this.svg = d3.select(`#${svgId}`);
+                this.bst = {
+                    root: null,
+                    inOrder: function(node, result = []) {
+                        if (node !== null) {
+                            this.inOrder(node.left, result);
+                            result.push(node.value);
+                            this.inOrder(node.right, result);
+                        }
+                        return result;
+                    },
+                    preOrder: function(node, result = []) {
+                        if (node !== null) {
+                            result.push(node.value);
+                            this.preOrder(node.left, result);
+                            this.preOrder(node.right, result);
+                        }
+                        return result;
+                    },
+                    postOrder: function(node, result = []) {
+                        if (node !== null) {
+                            this.postOrder(node.left, result);
+                            this.postOrder(node.right, result);
+                            result.push(node.value);
+                        }
+                        return result;
+                    }
+                };
+            },
+            
+            generateRandomBST() {
+                // Create a simple random BST for the challenge
+                const values = [];
+                const numNodes = 5 + Math.floor(Math.random() * 3); // 5-7 nodes
+                
+                // Generate unique random values
+                while (values.length < numNodes) {
+                    const value = getRandomInt(1, 99);
+                    if (!values.includes(value)) {
+                        values.push(value);
+                    }
+                }
+                
+                // Reset the BST
+                this.bst.root = null;
+                
+                // Insert values into BST
+                for (const value of values) {
+                    this.insertNode(value);
+                }
+                
+                return this.bst.root;
+            },
+            
+            insertNode(value) {
+                const node = {
+                    value: value,
+                    left: null,
+                    right: null
+                };
+                
+                if (this.bst.root === null) {
+                    this.bst.root = node;
+                } else {
+                    this.insertNodeRecursive(this.bst.root, node);
+                }
+            },
+            
+            insertNodeRecursive(root, node) {
+                if (node.value < root.value) {
+                    if (root.left === null) {
+                        root.left = node;
+                    } else {
+                        this.insertNodeRecursive(root.left, node);
+                    }
+                } else {
+                    if (root.right === null) {
+                        root.right = node;
+                    } else {
+                        this.insertNodeRecursive(root.right, node);
+                    }
+                }
+            },
+            
+            startChallenge() {
+                // Generate a random BST
+                this.generateRandomBST();
+                
+                // Select a random traversal type
+                const traversalTypes = ['In-Order', 'Pre-Order', 'Post-Order'];
+                this.traversalType = traversalTypes[Math.floor(Math.random() * traversalTypes.length)];
+                
+                // Calculate the correct sequence
+                this.correctSequence = [];
+                
+                switch (this.traversalType) {
+                    case 'In-Order':
+                        this.correctSequence = this.bst.inOrder(this.bst.root);
+                        break;
+                    case 'Pre-Order':
+                        this.correctSequence = this.bst.preOrder(this.bst.root);
+                        break;
+                    case 'Post-Order':
+                        this.correctSequence = this.bst.postOrder(this.bst.root);
+                        break;
+                }
+                
+                // Reset user sequence
+                this.userSequence = [];
+                
+                // Render the challenge BST
+                this.renderChallengeBST();
+                
+                // Update UI
+                document.getElementById('bst-challenge-type').textContent = this.traversalType;
+                document.getElementById('bst-challenge-sequence').textContent = '';
+                document.getElementById('bst-challenge-status').textContent = 'Haz clic en los nodos en el orden correcto según el recorrido.';
+                
+                // Activate challenge
+                this.isActive = true;
+                
+                // Update button
+                document.getElementById('bst-start-challenge').textContent = 'Reiniciar Desafío';
+            },
+            
+            renderChallengeBST() {
+                // Clear SVG
+                this.svg.selectAll('*').remove();
+                
+                // Calculate tree layout
+                const treeLayout = d3.tree().size([this.svg.node().clientWidth - 60, this.svg.node().clientHeight - 40]);
+                
+                // Convert BST to hierarchical data for D3
+                const hierarchy = this.convertToHierarchy(this.bst.root);
+                
+                // Apply layout
+                const treeData = treeLayout(d3.hierarchy(hierarchy));
+                
+                // Create a group for the entire tree
+                const g = this.svg.append('g')
+                    .attr('transform', `translate(30, 20)`);
+                
+                // Draw links
+                g.selectAll('.bst-link')
+                    .data(treeData.links())
+                    .enter()
+                    .append('path')
+                    .attr('class', 'bst-link')
+                    .attr('d', d3.linkVertical()
+                        .x(d => d.x)
+                        .y(d => d.y));
+                
+                // Draw nodes
+                const nodes = g.selectAll('.bst-node')
+                    .data(treeData.descendants())
+                    .enter()
+                    .append('g')
+                    .attr('class', 'bst-node')
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`)
+                    .on('click', (event, d) => {
+                        if (this.isActive) {
+                            this.nodeClicked(d.data.name);
+                        }
+                    });
+                
+                // Add circles for nodes
+                nodes.append('circle')
+                    .attr('r', 20);
+                
+                // Add text labels
+                nodes.append('text')
+                    .text(d => d.data.name);
+            },
+            
+            // Converts BST node structure to hierarchy format for D3
+            convertToHierarchy(node) {
+                if (node === null) return null;
+                
+                const result = {
+                    name: node.value,
+                    children: []
+                };
+                
+                if (node.left !== null) {
+                    result.children.push(this.convertToHierarchy(node.left));
+                }
+                
+                if (node.right !== null) {
+                    result.children.push(this.convertToHierarchy(node.right));
+                }
+                
+                // If there are no children, don't include empty children array
+                if (result.children.length === 0) {
+                    delete result.children;
+                }
+                
+                return result;
+            },
+            
+            nodeClicked(value) {
+                // Add value to user sequence
+                this.userSequence.push(value);
+                
+                // Update UI
+                document.getElementById('bst-challenge-sequence').textContent = this.userSequence.join(' → ');
+                
+                // Highlight clicked node
+                this.svg.selectAll('.bst-node')
+                    .filter(d => d.data.name === value)
+                    .select('circle')
+                    .transition()
+                    .duration(200)
+                    .attr('fill', '#FC8181')
+                    .transition()
+                    .duration(500)
+                    .attr('fill', '#10B981');
+                
+                // Check if user sequence is complete
+                if (this.userSequence.length === this.correctSequence.length) {
+                    this.checkCompletion();
+                }
+            },
+            
+            checkCompletion() {
+                // Compare user sequence with correct sequence
+                let isCorrect = true;
+                
+                for (let i = 0; i < this.correctSequence.length; i++) {
+                    if (this.userSequence[i] !== this.correctSequence[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+                
+                // Update status
+                if (isCorrect) {
+                    document.getElementById('bst-challenge-status').textContent = '¡Correcto! Has completado el recorrido exactamente.';
+                    document.getElementById('bst-challenge-status').className = 'text-green-600 font-bold';
+                } else {
+                    document.getElementById('bst-challenge-status').textContent = 'Incorrecto. La secuencia correcta era: ' + this.correctSequence.join(' → ');
+                    document.getElementById('bst-challenge-status').className = 'text-red-600 font-bold';
+                }
+                
+                // Deactivate challenge
+                this.isActive = false;
+                
+                // Update button
+                document.getElementById('bst-start-challenge').textContent = 'Nuevo Desafío';
+            }
+        };
+
+        const bstChallengeUI = {
+            init(svgId, startButtonId) {
+                bstChallengeManager.init(svgId);
+                
+                document.getElementById(startButtonId).addEventListener('click', () => {
+                    bstChallengeManager.startChallenge();
+                });
+            }
+        };
+
+        const bstModule = {
+            init() {
+                // Initialize components
+                bstRendering.init('bst-svg');
+                bstTutorial.init('bst-tutorial-title', 'bst-tutorial-content', 'bst-tutorial-prev', 'bst-tutorial-next');
+                bstChallengeUI.init('bst-challenge-svg', 'bst-start-challenge');
+                
+                // Add event listeners
+                document.getElementById('bst-insert').addEventListener('click', () => this.insert());
+                document.getElementById('bst-search').addEventListener('click', () => this.search());
+                document.getElementById('bst-delete').addEventListener('click', () => this.delete());
+                document.getElementById('bst-reset').addEventListener('click', () => this.reset());
+                
+                document.getElementById('bst-inorder').addEventListener('click', () => this.traverseInOrder());
+                document.getElementById('bst-preorder').addEventListener('click', () => this.traversePreOrder());
+                document.getElementById('bst-postorder').addEventListener('click', () => this.traversePostOrder());
+                
+                // Initialize UI
+                this.reset();
+                this.updateUI();
+            },
+            
+            insert() {
+                const inputElement = document.getElementById('bst-input');
+                const value = inputElement.value.trim();
+                
+                if (value === '') {
+                    this.showFeedback('Por favor, ingresa un valor', 'error');
+                    return;
+                }
+                
+                const numValue = parseInt(value, 10);
+                
+                // Check if value already exists
+                if (bstLogic.search(numValue)) {
+                    this.showFeedback('El valor ya existe en el árbol', 'error');
+                    return;
+                }
+                
+                bstLogic.insert(numValue);
+                inputElement.value = '';
+                this.updateUI();
+                this.showFeedback(`Valor ${numValue} insertado en el árbol`, 'success');
+            },
+            
+            search() {
+                const inputElement = document.getElementById('bst-input');
+                const value = inputElement.value.trim();
+                
+                if (value === '') {
+                    this.showFeedback('Por favor, ingresa un valor para buscar', 'error');
+                    return;
+                }
+                
+                const numValue = parseInt(value, 10);
+                const found = bstLogic.search(numValue);
+                
+                if (found) {
+                    this.showFeedback(`Valor ${numValue} encontrado en el árbol`, 'success');
+                } else {
+                    this.showFeedback(`Valor ${numValue} no encontrado en el árbol`, 'error');
+                }
+            },
+            
+            delete() {
+                const inputElement = document.getElementById('bst-input');
+                const value = inputElement.value.trim();
+                
+                if (value === '') {
+                    this.showFeedback('Por favor, ingresa un valor para eliminar', 'error');
+                    return;
+                }
+                
+                const numValue = parseInt(value, 10);
+                
+                // Check if value exists
+                if (!bstLogic.search(numValue)) {
+                    this.showFeedback('El valor no existe en el árbol', 'error');
+                    return;
+                }
+                
+                bstLogic.remove(numValue);
+                inputElement.value = '';
+                this.updateUI();
+                this.showFeedback(`Valor ${numValue} eliminado del árbol`, 'success');
+            },
+            
+            reset() {
+                bstLogic.clear();
+                document.getElementById('bst-input').value = '';
+                document.getElementById('traversal-result').textContent = '';
+                this.updateUI();
+                this.hideFeedback();
+            },
+            
+            traverseInOrder() {
+                const result = bstLogic.inOrder();
+                document.getElementById('traversal-result').textContent = `In-Order: ${result.join(' → ')}`;
+                bstRendering.highlightPath(result);
+            },
+            
+            traversePreOrder() {
+                const result = bstLogic.preOrder();
+                document.getElementById('traversal-result').textContent = `Pre-Order: ${result.join(' → ')}`;
+                bstRendering.highlightPath(result);
+            },
+            
+            traversePostOrder() {
+                const result = bstLogic.postOrder();
+                document.getElementById('traversal-result').textContent = `Post-Order: ${result.join(' → ')}`;
+                bstRendering.highlightPath(result);
+            },
+            
+            updateUI() {
+                bstRendering.render(bstLogic.getRoot());
+            },
+            
+            showFeedback(message, type) {
+                const feedbackElement = document.getElementById('bst-feedback');
+                feedbackElement.textContent = message;
+                feedbackElement.className = `feedback ${type}`;
+                
+                // Auto-hide feedback after 3 seconds
+                setTimeout(() => {
+                    this.hideFeedback();
+                }, 3000);
+            },
+            
+            hideFeedback() {
+                const feedbackElement = document.getElementById('bst-feedback');
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback';
+            }
+        };
+
+        // Helper function to get a random integer between min and max (inclusive)
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
 </html>

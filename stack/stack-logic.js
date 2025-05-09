@@ -1,5 +1,5 @@
 // stack/stack-logic.js
-// Definición de la clase Pila (Stack)
+// Definición de la clase Pila (Stack) - Contenido original
 
 /**
  * Implementación básica de una estructura de datos Pila (Stack).
@@ -9,7 +9,7 @@ export class Stack {
     constructor() {
         // Array para almacenar los elementos de la pila.
         // El fondo de la pila es items[0], la cima es items[items.length - 1].
-        this.items = [];
+        this._items = []; // Usar convención _ para propiedad interna
     }
 
     /**
@@ -17,7 +17,7 @@ export class Stack {
      * @param {any} element - El elemento a añadir.
      */
     push(element) {
-        this.items.push(element);
+        this._items.push(element);
     }
 
     /**
@@ -29,7 +29,7 @@ export class Stack {
         if (this.isEmpty()) {
             return undefined;
         }
-        return this.items.pop();
+        return this._items.pop();
     }
 
     /**
@@ -41,7 +41,7 @@ export class Stack {
         if (this.isEmpty()) {
             return undefined;
         }
-        return this.items[this.items.length - 1];
+        return this._items[this._items.length - 1];
     }
 
      /**
@@ -49,7 +49,7 @@ export class Stack {
       * @returns {boolean} True si la pila está vacía.
       */
     isEmpty() {
-        return this.items.length === 0;
+        return this._items.length === 0;
     }
 
     /**
@@ -57,14 +57,14 @@ export class Stack {
      * @returns {number} El tamaño de la pila.
      */
     size() {
-        return this.items.length;
+        return this._items.length;
     }
 
      /**
       * Remueve todos los elementos de la pila.
       */
      clear() {
-         this.items = [];
+         this._items = [];
      }
 
     /**
@@ -73,7 +73,7 @@ export class Stack {
      * @returns {string} Representación en string de la pila.
      */
     toString() {
-        return this.items.toString();
+        return this._items.toString();
     }
 
     /**
@@ -81,10 +81,11 @@ export class Stack {
      * @returns {Array<any>} El array interno de la pila.
      */
     get items() {
-        return this._items;
+        return [...this._items]; // Retornar una copia para evitar modificación externa directa
     }
 
-    set items(newItems) {
-        this._items = newItems;
-    }
+    // No necesitamos un setter si el array se manipula solo con push/pop/clear
+    // set items(newItems) {
+    //     this._items = newItems;
+    // }
 }

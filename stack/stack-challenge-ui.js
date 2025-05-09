@@ -1,21 +1,25 @@
 // stack/stack-challenge-ui.js
-// Funciones para actualizar la interfaz visual específica del desafío de la Pila.
+// Funciones para actualizar la interfaz visual específica del desafío de la Pila. - Contenido original
 
 /**
  * Renderiza el contenido de un array como una secuencia de elementos en un contenedor DOM.
- * Usado para mostrar la configuración objetivo de una pila.
+ * Usado para mostrar la configuración objetivo de una pila en el desafío.
  */
 function renderSequence(sequenceArray, containerElement) {
     containerElement.innerHTML = ''; // Limpia el contenido actual
     if (sequenceArray && sequenceArray.length > 0) {
          sequenceArray.forEach(item => {
             const element = document.createElement('div');
-            element.className = 'sequence-item';
+            element.className = 'sequence-item'; // Clase CSS para los ítems de secuencia
             element.textContent = item;
             containerElement.appendChild(element);
         });
     } else {
-         containerElement.textContent = 'Vacío'; // Texto traducido
+         // Mostrar un texto indicando que está vacío si el array está vacío
+         const emptyMsg = document.createElement('span'); // Usar span o div pequeño
+         emptyMsg.className = 'text-gray-400 italic text-sm'; // Clases de estilo
+         emptyMsg.textContent = 'Vacío';
+         containerElement.appendChild(emptyMsg);
     }
 }
 
