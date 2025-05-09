@@ -21,6 +21,8 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--background-color);
             color: var(--foreground-color);
+            /* Prevent scrolling when menu is open */
+            overflow-x: hidden;
         }
 
         .container-app {
@@ -38,10 +40,12 @@
             display: flex;
             align-items: center;
             font-weight: 500;
+             /* Ensure text is visible on dark background */
+            color: white;
         }
 
         .nav-item:hover {
-            background-color: rgba(76, 110, 245, 0.1);
+            background-color: rgba(255, 255, 255, 0.1); /* Lighter hover for dark background */
         }
 
         .nav-item.active {
@@ -52,6 +56,7 @@
         .nav-item i {
             margin-right: 12px;
             font-size: 18px;
+            color: white; /* Ensure icons are visible */
         }
 
         .section {
@@ -390,13 +395,23 @@
             .container-app {
                 padding: 10px;
             }
-            
+
+            /* Hide the original navigation sidebar on mobile */
+            .md\:w-1\/5 {
+                display: none;
+            }
+
+            /* Adjust main content width on mobile */
+            .md\:w-4\/5 {
+                 width: 100%;
+             }
+
             .nav-container {
                 flex-direction: row;
                 overflow-x: auto;
                 margin-bottom: 15px;
             }
-            
+
             .nav-item {
                 margin-right: 8px;
                 margin-bottom: 0;
@@ -406,13 +421,57 @@
             .queue-game-queues {
                 flex-direction: column;
             }
+
+            /* Style for the mobile menu when open */
+            #mobile-menu.open {
+                transform: translateX(0);
+            }
+
+            /* Style for the overlay when menu is open */
+            #menu-overlay.show {
+                display: block;
+            }
+             /* Ensure logo text is white in the mobile menu */
+            #mobile-menu .logo h1 {
+                color: white;
+            }
+             /* Ensure logo text is white in the mobile menu */
+            #mobile-menu .logo p {
+                color: #D1D5DB; /* A lighter shade for description */
+            }
         }
     </style>
 </head>
 <body>
+    <button id="menu-toggle" class="md:hidden fixed top-4 right-4 z-50 p-3 bg-primary-color text-grey-900 rounded-full shadow-lg">
+        <i class="fas fa-bars text-xl"></i>
+    </button>
+
+    <div id="mobile-menu" class="fixed top-0 right-0 h-full w-64 bg-gray-900 shadow-lg z-40 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-6">
+            <div class="logo mb-6">
+                <h1 class="text-2xl font-bold">EstruData</h1>
+                <p class="text-sm text-gray-500">Visualizador de Estructuras</p>
+            </div>
+            <div id="stack-nav-mobile" class="nav-item active">
+                <i class="fas fa-layer-group"></i>
+                <span>Pila (Stack)</span>
+            </div>
+            <div id="queue-nav-mobile" class="nav-item">
+                <i class="fas fa-people-line"></i>
+                <span>Cola (Queue)</span>
+            </div>
+            <div id="bst-nav-mobile" class="nav-item">
+                <i class="fas fa-diagram-project"></i>
+                <span>Árbol BST</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu-overlay" class="fixed top-0 left-0 h-full w-full bg-black opacity-50 z-30 hidden"></div>
+
     <div class="container-app">
         <div class="flex flex-col md:flex-row gap-6">
-            <!-- Navigation Sidebar -->
             <div class="w-full md:w-1/5">
                 <div class="nav-container flex flex-col">
                     <div class="logo mb-6">
@@ -434,13 +493,10 @@
                 </div>
             </div>
 
-            <!-- Main Content -->
             <div class="w-full md:w-4/5">
-                <!-- Stack Section -->
                 <div id="stack-section" class="section active">
                     <h2 class="text-2xl font-bold mb-4">Pila (Stack) - LIFO</h2>
-                    
-                    <!-- Tutorial Container -->
+
                     <div class="tutorial-container">
                         <div id="stack-tutorial-container">
                             <div class="tutorial-title" id="stack-tutorial-title">Bienvenido a la Pila (Stack)</div>
@@ -457,13 +513,11 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Visualization Container -->
+
                     <div class="visualization-container">
                         <div id="stack-container"></div>
                     </div>
-                    
-                    <!-- Controls Container -->
+
                     <div class="controls-container">
                         <input type="number" id="stack-input" class="input-field" placeholder="Valor">
                         <button id="stack-push" class="btn btn-primary">
@@ -477,16 +531,14 @@
                         </button>
                         <div id="stack-feedback" class="feedback"></div>
                     </div>
-                    
-                    <!-- Challenge Container -->
+
                     <div class="challenge-container">
                         <h3 class="text-lg font-semibold mb-3">Desafío: ¡Ordena las Pilas!</h3>
                         <p class="mb-4">Utiliza las tres pilas para ordenar todos los elementos en la secuencia correcta.</p>
-                        
+
                         <div id="stack-challenge-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                            <!-- Will be populated by the challenge manager -->
-                        </div>
-                        
+                            </div>
+
                         <div class="mt-4 flex justify-between">
                             <span id="stack-challenge-status"></span>
                             <button id="stack-start-challenge" class="btn btn-tertiary">
@@ -495,12 +547,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Queue Section -->
+
                 <div id="queue-section" class="section">
                     <h2 class="text-2xl font-bold mb-4">Cola (Queue) - FIFO</h2>
-                    
-                    <!-- Tutorial Container -->
+
                     <div class="tutorial-container">
                         <div id="queue-tutorial-container">
                             <div class="tutorial-title" id="queue-tutorial-title">Bienvenido a la Cola (Queue)</div>
@@ -517,13 +567,11 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Visualization Container -->
+
                     <div class="visualization-container">
                         <div id="queue-container"></div>
                     </div>
-                    
-                    <!-- Controls Container -->
+
                     <div class="controls-container">
                         <input type="number" id="queue-input" class="input-field" placeholder="Valor">
                         <button id="queue-enqueue" class="btn btn-primary">
@@ -537,12 +585,11 @@
                         </button>
                         <div id="queue-feedback" class="feedback"></div>
                     </div>
-                    
-                    <!-- Mini-game Container -->
+
                     <div class="challenge-container">
                         <h3 class="text-lg font-semibold mb-3">Mini-juego: Procesador de Tareas</h3>
                         <p class="mb-4">Gestiona dos colas para completar la mayor cantidad de tareas posible antes de que se acabe el tiempo.</p>
-                        
+
                         <div id="queue-game-container" class="queue-game-container">
                             <div class="queue-game-stats">
                                 <div>
@@ -554,7 +601,7 @@
                                     <span id="queue-game-score">0</span>
                                 </div>
                             </div>
-                            
+
                             <div class="queue-game-queues">
                                 <div class="queue-game-queue">
                                     <div class="queue-title">Cola Principal (Velocidad Normal)</div>
@@ -571,7 +618,7 @@
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div class="queue-game-controls">
                                 <button id="start-game" class="btn btn-tertiary">
                                     <i class="fas fa-play"></i> Iniciar Juego
@@ -583,12 +630,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- BST Section -->
+
                 <div id="bst-section" class="section">
                     <h2 class="text-2xl font-bold mb-4">Árbol Binario de Búsqueda (BST)</h2>
-                    
-                    <!-- Tutorial Container -->
+
                     <div class="tutorial-container">
                         <div id="bst-tutorial-container">
                             <div class="tutorial-title" id="bst-tutorial-title">Bienvenido al Árbol Binario de Búsqueda</div>
@@ -605,13 +650,11 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Visualization Container -->
+
                     <div class="visualization-container">
                         <svg id="bst-svg"></svg>
                     </div>
-                    
-                    <!-- Controls Container -->
+
                     <div class="controls-container">
                         <input type="number" id="bst-input" class="input-field" placeholder="Valor">
                         <button id="bst-insert" class="btn btn-primary">
@@ -628,8 +671,7 @@
                         </button>
                         <div id="bst-feedback" class="feedback"></div>
                     </div>
-                    
-                    <!-- Traversal Controls -->
+
                     <div class="controls-container">
                         <div class="font-semibold mr-4">Recorridos:</div>
                         <button id="bst-inorder" class="btn btn-tertiary">
@@ -643,12 +685,11 @@
                         </button>
                         <div id="traversal-result" class="mt-2 text-sm"></div>
                     </div>
-                    
-                    <!-- Challenge Container -->
+
                     <div class="challenge-container">
                         <h3 class="text-lg font-semibold mb-3">Desafío: Recorridos del Árbol</h3>
                         <p class="mb-4">Haz clic en los nodos en el orden correcto según el tipo de recorrido indicado.</p>
-                        
+
                         <div id="bst-challenge-container" class="mt-4">
                             <div class="mb-2">
                                 <span class="font-bold">Tipo de recorrido:</span>
@@ -660,7 +701,7 @@
                             </div>
                             <svg id="bst-challenge-svg" class="w-full h-64 mt-4 border border-gray-200 rounded-lg"></svg>
                         </div>
-                        
+
                         <div class="mt-4 flex justify-between">
                             <span id="bst-challenge-status"></span>
                             <button id="bst-start-challenge" class="btn btn-tertiary">
@@ -682,6 +723,26 @@
                 document.getElementById('queue-nav').addEventListener('click', () => this.showSection('queue'));
                 document.getElementById('bst-nav').addEventListener('click', () => this.showSection('bst'));
 
+                // Add event listeners for mobile navigation
+                document.getElementById('stack-nav-mobile').addEventListener('click', () => this.showSection('stack'));
+                document.getElementById('queue-nav-mobile').addEventListener('click', () => this.showSection('queue'));
+                document.getElementById('bst-nav-mobile').addEventListener('click', () => this.showSection('bst'));
+
+                // Initialize mobile menu toggle
+                const menuToggle = document.getElementById('menu-toggle');
+                const mobileMenu = document.getElementById('mobile-menu');
+                const menuOverlay = document.getElementById('menu-overlay');
+
+                menuToggle.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('open');
+                    menuOverlay.classList.toggle('show');
+                });
+
+                menuOverlay.addEventListener('click', () => {
+                    mobileMenu.classList.remove('open');
+                    menuOverlay.classList.remove('show');
+                });
+
                 // Initialize modules
                 stackModule.init();
                 queueModule.init();
@@ -693,22 +754,38 @@
                 document.querySelectorAll('.section').forEach(section => {
                     section.classList.remove('active');
                 });
-                
-                // Hide all nav items
+
+                // Hide all nav items (both desktop and mobile)
                 document.querySelectorAll('.nav-item').forEach(item => {
                     item.classList.remove('active');
                 });
-                
-                // Show selected section and activate nav item
+
+                // Show selected section and activate nav item (both desktop and mobile)
                 document.getElementById(`${sectionName}-section`).classList.add('active');
-                document.getElementById(`${sectionName}-nav`).classList.add('active');
+                 // Activate desktop nav if visible
+                const desktopNav = document.getElementById(`${sectionName}-nav`);
+                if (desktopNav) {
+                    desktopNav.classList.add('active');
+                }
+                // Activate mobile nav if visible
+                const mobileNav = document.getElementById(`${sectionName}-nav-mobile`);
+                 if (mobileNav) {
+                    mobileNav.classList.add('active');
+                }
+
+
+                // Close mobile menu after selecting a section
+                const mobileMenu = document.getElementById('mobile-menu');
+                const menuOverlay = document.getElementById('menu-overlay');
+                mobileMenu.classList.remove('open');
+                menuOverlay.classList.remove('show');
             }
         };
 
         // Stack module
         const stackLogic = {
             items: [],
-            
+
             push(value) {
                 if (value !== undefined && value !== null && value !== '') {
                     this.items.push(value);
@@ -716,29 +793,29 @@
                 }
                 return false;
             },
-            
+
             pop() {
                 if (this.isEmpty()) {
                     return null;
                 }
                 return this.items.pop();
             },
-            
+
             peek() {
                 if (this.isEmpty()) {
                     return null;
                 }
                 return this.items[this.items.length - 1];
             },
-            
+
             isEmpty() {
                 return this.items.length === 0;
             },
-            
+
             size() {
                 return this.items.length;
             },
-            
+
             clear() {
                 this.items = [];
             },
@@ -750,15 +827,15 @@
 
         const stackRendering = {
             container: null,
-            
+
             init(containerId) {
                 this.container = document.getElementById(containerId);
             },
-            
+
             render(items) {
                 // Clear the container
                 this.container.innerHTML = '';
-                
+
                 // Render each item
                 for (const item of items) {
                     const element = document.createElement('div');
@@ -766,7 +843,7 @@
                     element.textContent = item;
                     this.container.appendChild(element);
                 }
-                
+
                 // If stack is empty, show a placeholder
                 if (items.length === 0) {
                     const emptyMsg = document.createElement('div');
@@ -775,13 +852,13 @@
                     this.container.appendChild(emptyMsg);
                 }
             },
-            
+
             highlightTop() {
                 const elements = this.container.querySelectorAll('.stack-element');
                 if (elements.length > 0) {
                     const topElement = elements[0];
                     topElement.classList.add('highlight');
-                    
+
                     // Remove highlight after animation
                     setTimeout(() => {
                         topElement.classList.remove('highlight');
@@ -806,7 +883,7 @@
                 },
                 {
                     title: "Aplicaciones de las Pilas",
-                    content: "Las pilas se utilizan en muchas aplicaciones: gestión de la memoria de programas (pila de llamadas), historial de navegación web, algoritmos de búsqueda y recorrido, evaluación de expresiones matemáticas, funciones Deshacer/Rehacer, entre otros."
+                    content: "Las pilas se utilizan en muchas aplicaciones: gestión de la memoria de programas (pila de llamadas), historial de navegación web, algoritmos de búsqueda y recorrido, evaluación de expresiones matemáticas, funciones Deshacer/Redhacer, entre otros."
                 },
                 {
                     title: "¡Ahora es tu turno!",
@@ -818,43 +895,43 @@
             contentElement: null,
             prevButton: null,
             nextButton: null,
-            
+
             init(titleId, contentId, prevId, nextId) {
                 this.titleElement = document.getElementById(titleId);
                 this.contentElement = document.getElementById(contentId);
                 this.prevButton = document.getElementById(prevId);
                 this.nextButton = document.getElementById(nextId);
-                
+
                 this.prevButton.addEventListener('click', () => this.prevStep());
                 this.nextButton.addEventListener('click', () => this.nextStep());
-                
+
                 this.updateContent();
             },
-            
+
             updateContent() {
                 const step = this.steps[this.currentStep];
                 this.titleElement.textContent = step.title;
                 this.contentElement.textContent = step.content;
-                
+
                 // Update button states
                 this.prevButton.disabled = this.currentStep === 0;
                 this.nextButton.disabled = this.currentStep === this.steps.length - 1;
             },
-            
+
             nextStep() {
                 if (this.currentStep < this.steps.length - 1) {
                     this.currentStep++;
                     this.updateContent();
                 }
             },
-            
+
             prevStep() {
                 if (this.currentStep > 0) {
                     this.currentStep--;
                     this.updateContent();
                 }
             },
-            
+
             reset() {
                 this.currentStep = 0;
                 this.updateContent();
@@ -865,10 +942,10 @@
             stacks: [],
             targetSequence: [],
             isActive: false,
-            
+
             init(containerElement) {
                 this.containerElement = containerElement;
-                
+
                 // Initialize three stacks
                 this.stacks = [
                     { id: 'stack1', items: [] },
@@ -876,36 +953,36 @@
                     { id: 'stack3', items: [] }
                 ];
             },
-            
+
             startChallenge() {
                 // Clear stacks
                 this.stacks.forEach(stack => {
                     stack.items = [];
                 });
-                
+
                 // Generate random sequence
                 this.targetSequence = [];
                 const numElements = 5 + Math.floor(Math.random() * 3); // 5-7 elements
                 for (let i = 0; i < numElements; i++) {
                     this.targetSequence.push(i + 1);
                 }
-                
+
                 // Shuffle and place in the first stack
                 this.stacks[0].items = this.shuffleArray([...this.targetSequence]);
-                
+
                 // Render the challenge
                 this.renderChallenge();
-                
+
                 // Update status
                 document.getElementById('stack-challenge-status').textContent = 'Ordena los elementos del 1 al ' + numElements + ' en la tercera pila';
-                
+
                 // Activate challenge
                 this.isActive = true;
-                
+
                 // Update button
                 document.getElementById('stack-start-challenge').textContent = 'Reiniciar Desafío';
             },
-            
+
             shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -913,26 +990,26 @@
                 }
                 return array;
             },
-            
+
             renderChallenge() {
                 this.containerElement.innerHTML = '';
-                
+
                 // Create and render all three stacks
                 this.stacks.forEach((stack, index) => {
                     const stackColumn = document.createElement('div');
                     stackColumn.className = 'flex flex-col items-center';
-                    
+
                     // Stack title
                     const title = document.createElement('div');
                     title.className = 'font-semibold mb-2';
                     title.textContent = `Pila ${index + 1}`;
                     stackColumn.appendChild(title);
-                    
+
                     // Stack container
                     const stackContainer = document.createElement('div');
                     stackContainer.id = stack.id;
                     stackContainer.className = 'w-full h-60 border border-gray-200 rounded-lg p-2 flex flex-col-reverse items-center overflow-hidden';
-                    
+
                     // Render stack items
                     if (stack.items.length === 0) {
                         const emptyMsg = document.createElement('div');
@@ -947,60 +1024,60 @@
                             stackContainer.appendChild(element);
                         });
                     }
-                    
+
                     stackColumn.appendChild(stackContainer);
-                    
+
                     // Add buttons for Pop and Push operations
                     const buttonsContainer = document.createElement('div');
                     buttonsContainer.className = 'flex gap-2 mt-2';
-                    
+
                     // Create buttons for other stacks
                     this.stacks.forEach((targetStack, targetIndex) => {
                         if (targetIndex !== index) {
                             const button = document.createElement('button');
                             button.className = 'btn btn-sm btn-primary py-1 px-3 text-sm';
                             button.textContent = `→ Pila ${targetIndex + 1}`;
-                            
+
                             button.addEventListener('click', () => {
                                 this.moveElement(index, targetIndex);
                             });
-                            
+
                             buttonsContainer.appendChild(button);
                         }
                     });
-                    
+
                     stackColumn.appendChild(buttonsContainer);
                     this.containerElement.appendChild(stackColumn);
                 });
             },
-            
+
             moveElement(fromIndex, toIndex) {
                 if (!this.isActive) return;
-                
+
                 const fromStack = this.stacks[fromIndex];
                 const toStack = this.stacks[toIndex];
-                
+
                 // Check if source stack has elements
                 if (fromStack.items.length === 0) {
                     document.getElementById('stack-challenge-status').textContent = '¡No puedes mover de una pila vacía!';
                     return;
                 }
-                
+
                 // Move the top element
                 const item = fromStack.items.pop();
                 toStack.items.push(item);
-                
+
                 // Re-render the challenge
                 this.renderChallenge();
-                
+
                 // Check if challenge is complete
                 this.checkCompletion();
             },
-            
+
             checkCompletion() {
                 // Check if the third stack has all elements in ascending order
                 const thirdStack = this.stacks[2].items;
-                
+
                 if (thirdStack.length === this.targetSequence.length) {
                     // Check if the order is correct (ascending)
                     let isOrdered = true;
@@ -1010,7 +1087,7 @@
                             break;
                         }
                     }
-                    
+
                     if (isOrdered) {
                         document.getElementById('stack-challenge-status').textContent = '¡Desafío completado! Has ordenado correctamente la secuencia.';
                         this.isActive = false;
@@ -1024,9 +1101,9 @@
             init(containerId, startButtonId) {
                 this.container = document.getElementById(containerId);
                 this.startButton = document.getElementById(startButtonId);
-                
+
                 threeStackChallengeManager.init(this.container);
-                
+
                 this.startButton.addEventListener('click', () => {
                     threeStackChallengeManager.startChallenge();
                 });
@@ -1039,28 +1116,28 @@
                 stackRendering.init('stack-container');
                 stackTutorial.init('stack-tutorial-title', 'stack-tutorial-content', 'stack-tutorial-prev', 'stack-tutorial-next');
                 stackChallengeUI.init('stack-challenge-container', 'stack-start-challenge');
-                
+
                 // Add event listeners
                 document.getElementById('stack-push').addEventListener('click', () => this.push());
                 document.getElementById('stack-pop').addEventListener('click', () => this.pop());
                 document.getElementById('stack-reset').addEventListener('click', () => this.reset());
-                
+
                 // Initialize UI
                 this.reset();
                 this.updateUI();
             },
-            
+
             push() {
                 const inputElement = document.getElementById('stack-input');
                 const value = inputElement.value.trim();
-                
+
                 if (value === '') {
                     this.showFeedback('Por favor, ingresa un valor', 'error');
                     return;
                 }
-                
+
                 const success = stackLogic.push(parseInt(value, 10));
-                
+
                 if (success) {
                     inputElement.value = '';
                     this.updateUI();
@@ -1069,40 +1146,40 @@
                     this.showFeedback('No se pudo agregar el elemento', 'error');
                 }
             },
-            
+
             pop() {
                 if (stackLogic.isEmpty()) {
                     this.showFeedback('La pila está vacía', 'error');
                     return;
                 }
-                
+
                 const value = stackLogic.pop();
                 this.updateUI();
                 this.showFeedback(`Elemento ${value} eliminado de la pila`, 'success');
             },
-            
+
             reset() {
                 stackLogic.clear();
                 document.getElementById('stack-input').value = '';
                 this.updateUI();
                 this.hideFeedback();
             },
-            
+
             updateUI() {
                 stackRendering.render(stackLogic.getItems());
             },
-            
+
             showFeedback(message, type) {
                 const feedbackElement = document.getElementById('stack-feedback');
                 feedbackElement.textContent = message;
                 feedbackElement.className = `feedback ${type}`;
-                
+
                 // Auto-hide feedback after 3 seconds
                 setTimeout(() => {
                     this.hideFeedback();
                 }, 3000);
             },
-            
+
             hideFeedback() {
                 const feedbackElement = document.getElementById('stack-feedback');
                 feedbackElement.textContent = '';
@@ -1113,7 +1190,7 @@
         // Queue module
         const queueLogic = {
             items: [],
-            
+
             enqueue(value) {
                 if (value !== undefined && value !== null && value !== '') {
                     this.items.push(value);
@@ -1121,33 +1198,33 @@
                 }
                 return false;
             },
-            
+
             dequeue() {
                 if (this.isEmpty()) {
                     return null;
                 }
                 return this.items.shift();
             },
-            
+
             front() {
                 if (this.isEmpty()) {
                     return null;
                 }
                 return this.items[0];
             },
-            
+
             isEmpty() {
                 return this.items.length === 0;
             },
-            
+
             size() {
                 return this.items.length;
             },
-            
+
             clear() {
                 this.items = [];
             },
-            
+
             getItems() {
                 return [...this.items];
             }
@@ -1155,15 +1232,15 @@
 
         const queueRendering = {
             container: null,
-            
+
             init(containerId) {
                 this.container = document.getElementById(containerId);
             },
-            
+
             render(items) {
                 // Clear the container
                 this.container.innerHTML = '';
-                
+
                 // Render each item
                 for (const item of items) {
                     const element = document.createElement('div');
@@ -1171,7 +1248,7 @@
                     element.textContent = item;
                     this.container.appendChild(element);
                 }
-                
+
                 // If queue is empty, show a placeholder
                 if (items.length === 0) {
                     const emptyMsg = document.createElement('div');
@@ -1180,26 +1257,26 @@
                     this.container.appendChild(emptyMsg);
                 }
             },
-            
+
             highlightFront() {
                 const elements = this.container.querySelectorAll('.queue-element');
                 if (elements.length > 0) {
                     const frontElement = elements[0];
                     frontElement.classList.add('highlight');
-                    
+
                     // Remove highlight after animation
                     setTimeout(() => {
                         frontElement.classList.remove('highlight');
                     }, 1000);
                 }
             },
-            
+
             highlightRear() {
                 const elements = this.container.querySelectorAll('.queue-element');
                 if (elements.length > 0) {
                     const rearElement = elements[elements.length - 1];
                     rearElement.classList.add('highlight');
-                    
+
                     // Remove highlight after animation
                     setTimeout(() => {
                         rearElement.classList.remove('highlight');
@@ -1236,43 +1313,43 @@
             contentElement: null,
             prevButton: null,
             nextButton: null,
-            
+
             init(titleId, contentId, prevId, nextId) {
                 this.titleElement = document.getElementById(titleId);
                 this.contentElement = document.getElementById(contentId);
                 this.prevButton = document.getElementById(prevId);
                 this.nextButton = document.getElementById(nextId);
-                
+
                 this.prevButton.addEventListener('click', () => this.prevStep());
                 this.nextButton.addEventListener('click', () => this.nextStep());
-                
+
                 this.updateContent();
             },
-            
+
             updateContent() {
                 const step = this.steps[this.currentStep];
                 this.titleElement.textContent = step.title;
                 this.contentElement.textContent = step.content;
-                
+
                 // Update button states
                 this.prevButton.disabled = this.currentStep === 0;
                 this.nextButton.disabled = this.currentStep === this.steps.length - 1;
             },
-            
+
             nextStep() {
                 if (this.currentStep < this.steps.length - 1) {
                     this.currentStep++;
                     this.updateContent();
                 }
             },
-            
+
             prevStep() {
                 if (this.currentStep > 0) {
                     this.currentStep--;
                     this.updateContent();
                 }
             },
-            
+
             reset() {
                 this.currentStep = 0;
                 this.updateContent();
@@ -1287,101 +1364,101 @@
             gameTime: 120, // 2 minutes in seconds
             score: 0,
             isPlaying: false,
-            
+
             init() {
                 this.primaryQueue = {
                     items: [],
                     element: document.getElementById('primary-queue')
                 };
-                
+
                 this.secondaryQueue = {
                     items: [],
                     element: document.getElementById('secondary-queue')
                 };
-                
+
                 // Add event listeners
                 document.getElementById('start-game').addEventListener('click', () => this.startGame());
                 document.getElementById('reset-game').addEventListener('click', () => this.resetGame());
                 document.getElementById('divert-task').addEventListener('click', () => this.divertTask());
                 document.getElementById('reinsert-task').addEventListener('click', () => this.reinsertTask());
-                
+
                 // Initialize UI
                 this.updateUI();
             },
-            
+
             startGame() {
                 if (this.isPlaying) return;
-                
+
                 // Reset game state
                 this.resetGame();
-                
+
                 // Set game as playing
                 this.isPlaying = true;
-                
+
                 // Update buttons
                 document.getElementById('start-game').disabled = true;
                 document.getElementById('reset-game').disabled = false;
-                
+
                 // Start generating tasks
-                this.taskGenerationInterval = setInterval(() => this.generateTask(), getRandomInt(3000, 5000));
-                
+                this.taskGenerationInterval = setInterval(() => this.generateTask(), getRandomInt(3000, 4000));
+
                 // Start game ticker
                 this.gameInterval = setInterval(() => this.gameTick(), 1000);
             },
-            
+
             resetGame() {
                 // Clear intervals
                 if (this.gameInterval) clearInterval(this.gameInterval);
                 if (this.taskGenerationInterval) clearInterval(this.taskGenerationInterval);
-                
+
                 // Reset game state
                 this.primaryQueue.items = [];
                 this.secondaryQueue.items = [];
                 this.gameTime = 120;
                 this.score = 0;
                 this.isPlaying = false;
-                
+
                 // Update UI
                 this.updateUI();
                 this.updateTimerDisplay();
                 this.updateScoreDisplay();
-                
+
                 // Update buttons
                 document.getElementById('start-game').disabled = false;
                 document.getElementById('reset-game').disabled = true;
                 document.getElementById('divert-task').disabled = true;
                 document.getElementById('reinsert-task').disabled = true;
             },
-            
+
             generateTask() {
                 if (!this.isPlaying) return;
-                
+
                 // Generate a new task with random time
                 const taskTime = getRandomInt(2, 9);
                 const task = {
                     id: Date.now(),
                     time: taskTime
                 };
-                
+
                 // Add to primary queue
                 this.primaryQueue.items.push(task);
-                
+
                 // Update UI
                 this.updateUI();
             },
-            
+
             gameTick() {
                 if (!this.isPlaying) return;
-                
+
                 // Decrease game time
                 this.gameTime--;
                 this.updateTimerDisplay();
-                
+
                 // Process tasks in primary queue (decrease time by 1)
                 if (this.primaryQueue.items.length > 0) {
                     const frontTask = this.primaryQueue.items[0];
                     frontTask.time--;
-                    
+
                     // Check if task is completed
                     if (frontTask.time <= 0) {
                         this.primaryQueue.items.shift();
@@ -1389,12 +1466,12 @@
                         this.updateScoreDisplay();
                     }
                 }
-                
+
                 // Process tasks in secondary queue (decrease time by 0.5)
                 if (this.secondaryQueue.items.length > 0) {
                     const frontTask = this.secondaryQueue.items[0];
                     frontTask.time -= 0.5;
-                    
+
                     // Check if task is completed
                     if (frontTask.time <= 0) {
                         this.secondaryQueue.items.shift();
@@ -1402,71 +1479,71 @@
                         this.updateScoreDisplay();
                     }
                 }
-                
+
                 // Update UI
                 this.updateUI();
-                
+
                 // Check if game is over
                 if (this.gameTime <= 0) {
                     this.endGame();
                 }
             },
-            
+
             divertTask() {
                 if (!this.isPlaying || this.primaryQueue.items.length === 0) return;
-                
+
                 // Move front task from primary to secondary
                 const task = this.primaryQueue.items.shift();
                 this.secondaryQueue.items.push(task);
-                
+
                 // Update UI
                 this.updateUI();
             },
-            
+
             reinsertTask() {
                 if (!this.isPlaying || this.secondaryQueue.items.length === 0) return;
-                
+
                 // Move front task from secondary to front of primary
                 const task = this.secondaryQueue.items.shift();
                 this.primaryQueue.items.unshift(task);
-                
+
                 // Update UI
                 this.updateUI();
             },
-            
+
             endGame() {
                 // Stop the game
                 clearInterval(this.gameInterval);
                 clearInterval(this.taskGenerationInterval);
-                
+
                 // Set game as not playing
                 this.isPlaying = false;
-                
+
                 // Show end game message
                 alert(`¡Juego terminado! Tu puntuación final es: ${this.score}`);
-                
+
                 // Update buttons
                 document.getElementById('start-game').disabled = false;
                 document.getElementById('reset-game').disabled = true;
                 document.getElementById('divert-task').disabled = true;
                 document.getElementById('reinsert-task').disabled = true;
             },
-            
+
             updateUI() {
                 // Update primary queue
                 this.renderQueue(this.primaryQueue);
-                
+
                 // Update secondary queue
                 this.renderQueue(this.secondaryQueue);
-                
+
                 // Update button states
                 document.getElementById('divert-task').disabled = !this.isPlaying || this.primaryQueue.items.length === 0;
                 document.getElementById('reinsert-task').disabled = !this.isPlaying || this.secondaryQueue.items.length === 0;
             },
-            
+
             renderQueue(queue) {
                 queue.element.innerHTML = '';
-                
+
                 if (queue.items.length === 0) {
                     const emptyMsg = document.createElement('div');
                     emptyMsg.className = 'text-gray-400 italic text-center p-4';
@@ -1476,29 +1553,29 @@
                     for (const task of queue.items) {
                         const element = document.createElement('div');
                         element.className = 'task-element';
-                        
+
                         const timer = document.createElement('div');
                         timer.className = 'task-timer';
                         timer.textContent = task.time.toFixed(1);
-                        
+
                         const label = document.createElement('div');
                         label.className = 'task-label';
                         label.textContent = 'Tarea';
-                        
+
                         element.appendChild(timer);
                         element.appendChild(label);
                         queue.element.appendChild(element);
                     }
                 }
             },
-            
+
             updateTimerDisplay() {
                 const minutes = Math.floor(this.gameTime / 60);
                 const seconds = this.gameTime % 60;
-                document.getElementById('queue-game-timer').textContent = 
+                document.getElementById('queue-game-timer').textContent =
                     `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             },
-            
+
             updateScoreDisplay() {
                 document.getElementById('queue-game-score').textContent = this.score;
             }
@@ -1510,28 +1587,28 @@
                 queueRendering.init('queue-container');
                 queueTutorial.init('queue-tutorial-title', 'queue-tutorial-content', 'queue-tutorial-prev', 'queue-tutorial-next');
                 queueMinigame.init();
-                
+
                 // Add event listeners
                 document.getElementById('queue-enqueue').addEventListener('click', () => this.enqueue());
                 document.getElementById('queue-dequeue').addEventListener('click', () => this.dequeue());
                 document.getElementById('queue-reset').addEventListener('click', () => this.reset());
-                
+
                 // Initialize UI
                 this.reset();
                 this.updateUI();
             },
-            
+
             enqueue() {
                 const inputElement = document.getElementById('queue-input');
                 const value = inputElement.value.trim();
-                
+
                 if (value === '') {
                     this.showFeedback('Por favor, ingresa un valor', 'error');
                     return;
                 }
-                
+
                 const success = queueLogic.enqueue(parseInt(value, 10));
-                
+
                 if (success) {
                     inputElement.value = '';
                     this.updateUI();
@@ -1541,15 +1618,15 @@
                     this.showFeedback('No se pudo agregar el elemento', 'error');
                 }
             },
-            
+
             dequeue() {
                 if (queueLogic.isEmpty()) {
                     this.showFeedback('La cola está vacía', 'error');
                     return;
                 }
-                
+
                 queueRendering.highlightFront();
-                
+
                 // Small delay to show the highlight before removing
                 setTimeout(() => {
                     const value = queueLogic.dequeue();
@@ -1557,29 +1634,29 @@
                     this.showFeedback(`Elemento ${value} eliminado de la cola`, 'success');
                 }, 500);
             },
-            
+
             reset() {
                 queueLogic.clear();
                 document.getElementById('queue-input').value = '';
                 this.updateUI();
                 this.hideFeedback();
             },
-            
+
             updateUI() {
                 queueRendering.render(queueLogic.getItems());
             },
-            
+
             showFeedback(message, type) {
                 const feedbackElement = document.getElementById('queue-feedback');
                 feedbackElement.textContent = message;
                 feedbackElement.className = `feedback ${type}`;
-                
+
                 // Auto-hide feedback after 3 seconds
                 setTimeout(() => {
                     this.hideFeedback();
                 }, 3000);
             },
-            
+
             hideFeedback() {
                 const feedbackElement = document.getElementById('queue-feedback');
                 feedbackElement.textContent = '';
@@ -1590,7 +1667,7 @@
         // BST module
         const bstLogic = {
             root: null,
-            
+
             insertNode(root, node) {
                 if (node.value < root.value) {
                     if (root.left === null) {
@@ -1606,41 +1683,41 @@
                     }
                 }
             },
-            
+
             insert(value) {
                 const node = {
                     value: value,
                     left: null,
                     right: null
                 };
-                
+
                 if (this.root === null) {
                     this.root = node;
                 } else {
                     this.insertNode(this.root, node);
                 }
             },
-            
+
             searchNode(node, value) {
                 if (node === null) {
                     return false;
                 }
-                
+
                 if (value === node.value) {
                     return true;
                 }
-                
+
                 if (value < node.value) {
                     return this.searchNode(node.left, value);
                 } else {
                     return this.searchNode(node.right, value);
                 }
             },
-            
+
             search(value) {
                 return this.searchNode(this.root, value);
             },
-            
+
             findMinNode(node) {
                 if (node.left === null) {
                     return node;
@@ -1648,12 +1725,12 @@
                     return this.findMinNode(node.left);
                 }
             },
-            
+
             removeNode(node, value) {
                 if (node === null) {
                     return null;
                 }
-                
+
                 if (value < node.value) {
                     node.left = this.removeNode(node.left, value);
                     return node;
@@ -1665,29 +1742,29 @@
                     if (node.left === null && node.right === null) {
                         return null;
                     }
-                    
+
                     // Case 2: Node with one child
                     if (node.left === null) {
                         return node.right;
                     } else if (node.right === null) {
                         return node.left;
                     }
-                    
+
                     // Case 3: Node with two children
                     // Find the successor (smallest node in right subtree)
                     const successor = this.findMinNode(node.right);
                     node.value = successor.value;
-                    
+
                     // Delete the successor
                     node.right = this.removeNode(node.right, successor.value);
                     return node;
                 }
             },
-            
+
             remove(value) {
                 this.root = this.removeNode(this.root, value);
             },
-            
+
             inOrderTraversal(node, result = []) {
                 if (node !== null) {
                     this.inOrderTraversal(node.left, result);
@@ -1696,7 +1773,7 @@
                 }
                 return result;
             },
-            
+
             preOrderTraversal(node, result = []) {
                 if (node !== null) {
                     result.push(node.value);
@@ -1705,7 +1782,7 @@
                 }
                 return result;
             },
-            
+
             postOrderTraversal(node, result = []) {
                 if (node !== null) {
                     this.postOrderTraversal(node.left, result);
@@ -1714,23 +1791,23 @@
                 }
                 return result;
             },
-            
+
             inOrder() {
                 return this.inOrderTraversal(this.root);
             },
-            
+
             preOrder() {
                 return this.preOrderTraversal(this.root);
             },
-            
+
             postOrder() {
                 return this.postOrderTraversal(this.root);
             },
-            
+
             clear() {
                 this.root = null;
             },
-            
+
             getRoot() {
                 return this.root;
             }
@@ -1738,15 +1815,15 @@
 
         const bstRendering = {
             svg: null,
-            
+
             init(svgId) {
                 this.svg = d3.select(`#${svgId}`);
             },
-            
+
             render(root) {
                 // Clear SVG
                 this.svg.selectAll('*').remove();
-                
+
                 if (root === null) {
                     this.svg.append('text')
                         .attr('x', '50%')
@@ -1757,20 +1834,20 @@
                         .text('El árbol está vacío');
                     return;
                 }
-                
+
                 // Calculate tree layout
                 const treeLayout = d3.tree().size([this.svg.node().clientWidth - 60, this.svg.node().clientHeight - 40]);
-                
+
                 // Convert BST to hierarchical data for D3
                 const hierarchy = this.convertToHierarchy(root);
-                
+
                 // Apply layout
                 const treeData = treeLayout(d3.hierarchy(hierarchy));
-                
+
                 // Create a group for the entire tree
                 const g = this.svg.append('g')
                     .attr('transform', `translate(30, 20)`);
-                
+
                 // Draw links
                 g.selectAll('.bst-link')
                     .data(treeData.links())
@@ -1780,69 +1857,74 @@
                     .attr('d', d3.linkVertical()
                         .x(d => d.x)
                         .y(d => d.y));
-                
+
                 // Draw nodes
                 const nodes = g.selectAll('.bst-node')
                     .data(treeData.descendants())
                     .enter()
                     .append('g')
                     .attr('class', 'bst-node')
-                    .attr('transform', d => `translate(${d.x}, ${d.y})`);
-                
+                    .attr('transform', d => `translate(${d.x}, ${d.y})`)
+                    .on('click', (event, d) => {
+                        if (this.isActive) {
+                            this.nodeClicked(d.data.name);
+                        }
+                    });
+
                 // Add circles for nodes
                 nodes.append('circle')
                     .attr('r', 20);
-                
+
                 // Add text labels
                 nodes.append('text')
                     .text(d => d.data.name);
             },
-            
+
             // Converts BST node structure to hierarchy format for D3
             convertToHierarchy(node) {
                 if (node === null) return null;
-                
+
                 const result = {
                     name: node.value,
                     children: []
                 };
-                
+
                 if (node.left !== null) {
                     result.children.push(this.convertToHierarchy(node.left));
                 }
-                
+
                 if (node.right !== null) {
                     result.children.push(this.convertToHierarchy(node.right));
                 }
-                
+
                 // If there are no children, don't include empty children array
                 if (result.children.length === 0) {
                     delete result.children;
                 }
-                
+
                 return result;
             },
-            
+
             highlightPath(path) {
                 // Highlight nodes in the path sequentially
                 let index = 0;
-                
+
                 const highlightInterval = setInterval(() => {
                     // Clear previous highlights
                     this.svg.selectAll('.bst-node circle').attr('fill', '#10B981');
-                    
+
                     // Highlight current node
                     this.svg.selectAll('.bst-node')
                         .filter(d => d.data.name === path[index])
                         .select('circle')
                         .attr('fill', '#FC8181');
-                    
+
                     index++;
-                    
+
                     // Stop highlighting when all nodes in path are processed
                     if (index >= path.length) {
                         clearInterval(highlightInterval);
-                        
+
                         // Reset highlights after a delay
                         setTimeout(() => {
                             this.svg.selectAll('.bst-node circle').attr('fill', '#10B981');
@@ -1904,43 +1986,43 @@
             contentElement: null,
             prevButton: null,
             nextButton: null,
-            
+
             init(titleId, contentId, prevId, nextId) {
                 this.titleElement = document.getElementById(titleId);
                 this.contentElement = document.getElementById(contentId);
                 this.prevButton = document.getElementById(prevId);
                 this.nextButton = document.getElementById(nextId);
-                
+
                 this.prevButton.addEventListener('click', () => this.prevStep());
                 this.nextButton.addEventListener('click', () => this.nextStep());
-                
+
                 this.updateContent();
             },
-            
+
             updateContent() {
                 const step = this.steps[this.currentStep];
                 this.titleElement.textContent = step.title;
                 this.contentElement.textContent = step.content;
-                
+
                 // Update button states
                 this.prevButton.disabled = this.currentStep === 0;
                 this.nextButton.disabled = this.currentStep === this.steps.length - 1;
             },
-            
+
             nextStep() {
                 if (this.currentStep < this.steps.length - 1) {
                     this.currentStep++;
                     this.updateContent();
                 }
             },
-            
+
             prevStep() {
                 if (this.currentStep > 0) {
                     this.currentStep--;
                     this.updateContent();
                 }
             },
-            
+
             reset() {
                 this.currentStep = 0;
                 this.updateContent();
@@ -1953,7 +2035,7 @@
             correctSequence: [],
             userSequence: [],
             isActive: false,
-            
+
             init(svgId) {
                 this.svg = d3.select(`#${svgId}`);
                 this.bst = {
@@ -1984,12 +2066,12 @@
                     }
                 };
             },
-            
+
             generateRandomBST() {
                 // Create a simple random BST for the challenge
                 const values = [];
                 const numNodes = 5 + Math.floor(Math.random() * 3); // 5-7 nodes
-                
+
                 // Generate unique random values
                 while (values.length < numNodes) {
                     const value = getRandomInt(1, 99);
@@ -1997,32 +2079,32 @@
                         values.push(value);
                     }
                 }
-                
+
                 // Reset the BST
                 this.bst.root = null;
-                
+
                 // Insert values into BST
                 for (const value of values) {
                     this.insertNode(value);
                 }
-                
+
                 return this.bst.root;
             },
-            
+
             insertNode(value) {
                 const node = {
                     value: value,
                     left: null,
                     right: null
                 };
-                
+
                 if (this.bst.root === null) {
                     this.bst.root = node;
                 } else {
                     this.insertNodeRecursive(this.bst.root, node);
                 }
             },
-            
+
             insertNodeRecursive(root, node) {
                 if (node.value < root.value) {
                     if (root.left === null) {
@@ -2038,18 +2120,18 @@
                     }
                 }
             },
-            
+
             startChallenge() {
                 // Generate a random BST
                 this.generateRandomBST();
-                
+
                 // Select a random traversal type
                 const traversalTypes = ['In-Order', 'Pre-Order', 'Post-Order'];
                 this.traversalType = traversalTypes[Math.floor(Math.random() * traversalTypes.length)];
-                
+
                 // Calculate the correct sequence
                 this.correctSequence = [];
-                
+
                 switch (this.traversalType) {
                     case 'In-Order':
                         this.correctSequence = this.bst.inOrder(this.bst.root);
@@ -2061,42 +2143,54 @@
                         this.correctSequence = this.bst.postOrder(this.bst.root);
                         break;
                 }
-                
+
                 // Reset user sequence
                 this.userSequence = [];
-                
+
                 // Render the challenge BST
                 this.renderChallengeBST();
-                
+
                 // Update UI
                 document.getElementById('bst-challenge-type').textContent = this.traversalType;
                 document.getElementById('bst-challenge-sequence').textContent = '';
                 document.getElementById('bst-challenge-status').textContent = 'Haz clic en los nodos en el orden correcto según el recorrido.';
-                
+
                 // Activate challenge
                 this.isActive = true;
-                
+
                 // Update button
                 document.getElementById('bst-start-challenge').textContent = 'Reiniciar Desafío';
             },
-            
+
             renderChallengeBST() {
                 // Clear SVG
                 this.svg.selectAll('*').remove();
-                
+
+                if (this.bst.root === null) {
+                    this.svg.append('text')
+                        .attr('x', '50%')
+                        .attr('y', '50%')
+                        .attr('text-anchor', 'middle')
+                        .attr('dominant-baseline', 'middle')
+                        .attr('class', 'text-gray-400 italic')
+                        .text('El árbol está vacío');
+                    return;
+                }
+
+
                 // Calculate tree layout
                 const treeLayout = d3.tree().size([this.svg.node().clientWidth - 60, this.svg.node().clientHeight - 40]);
-                
+
                 // Convert BST to hierarchical data for D3
                 const hierarchy = this.convertToHierarchy(this.bst.root);
-                
+
                 // Apply layout
                 const treeData = treeLayout(d3.hierarchy(hierarchy));
-                
+
                 // Create a group for the entire tree
                 const g = this.svg.append('g')
                     .attr('transform', `translate(30, 20)`);
-                
+
                 // Draw links
                 g.selectAll('.bst-link')
                     .data(treeData.links())
@@ -2106,7 +2200,7 @@
                     .attr('d', d3.linkVertical()
                         .x(d => d.x)
                         .y(d => d.y));
-                
+
                 // Draw nodes
                 const nodes = g.selectAll('.bst-node')
                     .data(treeData.descendants())
@@ -2119,48 +2213,49 @@
                             this.nodeClicked(d.data.name);
                         }
                     });
-                
+
                 // Add circles for nodes
                 nodes.append('circle')
                     .attr('r', 20);
-                
+
                 // Add text labels
                 nodes.append('text')
                     .text(d => d.data.name);
             },
-            
+
             // Converts BST node structure to hierarchy format for D3
             convertToHierarchy(node) {
                 if (node === null) return null;
-                
+
                 const result = {
                     name: node.value,
                     children: []
                 };
-                
+
                 if (node.left !== null) {
                     result.children.push(this.convertToHierarchy(node.left));
                 }
-                
+
                 if (node.right !== null) {
                     result.children.push(this.convertToHierarchy(node.right));
                 }
-                
+
                 // If there are no children, don't include empty children array
                 if (result.children.length === 0) {
                     delete result.children;
                 }
-                
+
                 return result;
             },
-            
+
+
             nodeClicked(value) {
                 // Add value to user sequence
                 this.userSequence.push(value);
-                
+
                 // Update UI
                 document.getElementById('bst-challenge-sequence').textContent = this.userSequence.join(' → ');
-                
+
                 // Highlight clicked node
                 this.svg.selectAll('.bst-node')
                     .filter(d => d.data.name === value)
@@ -2170,25 +2265,25 @@
                     .attr('fill', '#FC8181')
                     .transition()
                     .duration(500)
-                    .attr('fill', '#10B981');
-                
+                    .attr('fill', '#10B988'); // Revert to original color
+
                 // Check if user sequence is complete
                 if (this.userSequence.length === this.correctSequence.length) {
                     this.checkCompletion();
                 }
             },
-            
+
             checkCompletion() {
                 // Compare user sequence with correct sequence
                 let isCorrect = true;
-                
+
                 for (let i = 0; i < this.correctSequence.length; i++) {
                     if (this.userSequence[i] !== this.correctSequence[i]) {
                         isCorrect = false;
                         break;
                     }
                 }
-                
+
                 // Update status
                 if (isCorrect) {
                     document.getElementById('bst-challenge-status').textContent = '¡Correcto! Has completado el recorrido exactamente.';
@@ -2197,10 +2292,10 @@
                     document.getElementById('bst-challenge-status').textContent = 'Incorrecto. La secuencia correcta era: ' + this.correctSequence.join(' → ');
                     document.getElementById('bst-challenge-status').className = 'text-red-600 font-bold';
                 }
-                
+
                 // Deactivate challenge
                 this.isActive = false;
-                
+
                 // Update button
                 document.getElementById('bst-start-challenge').textContent = 'Nuevo Desafío';
             }
@@ -2209,7 +2304,7 @@
         const bstChallengeUI = {
             init(svgId, startButtonId) {
                 bstChallengeManager.init(svgId);
-                
+
                 document.getElementById(startButtonId).addEventListener('click', () => {
                     bstChallengeManager.startChallenge();
                 });
@@ -2222,87 +2317,87 @@
                 bstRendering.init('bst-svg');
                 bstTutorial.init('bst-tutorial-title', 'bst-tutorial-content', 'bst-tutorial-prev', 'bst-tutorial-next');
                 bstChallengeUI.init('bst-challenge-svg', 'bst-start-challenge');
-                
+
                 // Add event listeners
                 document.getElementById('bst-insert').addEventListener('click', () => this.insert());
                 document.getElementById('bst-search').addEventListener('click', () => this.search());
                 document.getElementById('bst-delete').addEventListener('click', () => this.delete());
                 document.getElementById('bst-reset').addEventListener('click', () => this.reset());
-                
+
                 document.getElementById('bst-inorder').addEventListener('click', () => this.traverseInOrder());
                 document.getElementById('bst-preorder').addEventListener('click', () => this.traversePreOrder());
                 document.getElementById('bst-postorder').addEventListener('click', () => this.traversePostOrder());
-                
+
                 // Initialize UI
                 this.reset();
                 this.updateUI();
             },
-            
+
             insert() {
                 const inputElement = document.getElementById('bst-input');
                 const value = inputElement.value.trim();
-                
+
                 if (value === '') {
                     this.showFeedback('Por favor, ingresa un valor', 'error');
                     return;
                 }
-                
+
                 const numValue = parseInt(value, 10);
-                
+
                 // Check if value already exists
                 if (bstLogic.search(numValue)) {
                     this.showFeedback('El valor ya existe en el árbol', 'error');
                     return;
                 }
-                
+
                 bstLogic.insert(numValue);
                 inputElement.value = '';
                 this.updateUI();
                 this.showFeedback(`Valor ${numValue} insertado en el árbol`, 'success');
             },
-            
+
             search() {
                 const inputElement = document.getElementById('bst-input');
                 const value = inputElement.value.trim();
-                
+
                 if (value === '') {
                     this.showFeedback('Por favor, ingresa un valor para buscar', 'error');
                     return;
                 }
-                
+
                 const numValue = parseInt(value, 10);
                 const found = bstLogic.search(numValue);
-                
+
                 if (found) {
                     this.showFeedback(`Valor ${numValue} encontrado en el árbol`, 'success');
                 } else {
                     this.showFeedback(`Valor ${numValue} no encontrado en el árbol`, 'error');
                 }
             },
-            
+
             delete() {
                 const inputElement = document.getElementById('bst-input');
                 const value = inputElement.value.trim();
-                
+
                 if (value === '') {
                     this.showFeedback('Por favor, ingresa un valor para eliminar', 'error');
                     return;
                 }
-                
+
                 const numValue = parseInt(value, 10);
-                
+
                 // Check if value exists
                 if (!bstLogic.search(numValue)) {
                     this.showFeedback('El valor no existe en el árbol', 'error');
                     return;
                 }
-                
+
                 bstLogic.remove(numValue);
                 inputElement.value = '';
                 this.updateUI();
                 this.showFeedback(`Valor ${numValue} eliminado del árbol`, 'success');
             },
-            
+
             reset() {
                 bstLogic.clear();
                 document.getElementById('bst-input').value = '';
@@ -2310,40 +2405,40 @@
                 this.updateUI();
                 this.hideFeedback();
             },
-            
+
             traverseInOrder() {
                 const result = bstLogic.inOrder();
                 document.getElementById('traversal-result').textContent = `In-Order: ${result.join(' → ')}`;
                 bstRendering.highlightPath(result);
             },
-            
+
             traversePreOrder() {
                 const result = bstLogic.preOrder();
                 document.getElementById('traversal-result').textContent = `Pre-Order: ${result.join(' → ')}`;
                 bstRendering.highlightPath(result);
             },
-            
+
             traversePostOrder() {
                 const result = bstLogic.postOrder();
                 document.getElementById('traversal-result').textContent = `Post-Order: ${result.join(' → ')}`;
                 bstRendering.highlightPath(result);
             },
-            
+
             updateUI() {
                 bstRendering.render(bstLogic.getRoot());
             },
-            
+
             showFeedback(message, type) {
                 const feedbackElement = document.getElementById('bst-feedback');
                 feedbackElement.textContent = message;
                 feedbackElement.className = `feedback ${type}`;
-                
+
                 // Auto-hide feedback after 3 seconds
                 setTimeout(() => {
                     this.hideFeedback();
                 }, 3000);
             },
-            
+
             hideFeedback() {
                 const feedbackElement = document.getElementById('bst-feedback');
                 feedbackElement.textContent = '';
